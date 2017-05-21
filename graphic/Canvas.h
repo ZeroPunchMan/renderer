@@ -6,13 +6,12 @@
 
 //平底/顶三角形参数
 struct FlatTriangleArg {
-	MyVector2Int tine;
-	float tineZ;
-	MyColor *tineColor;
+	MyVector3 tine;
+	MyColor tineColor;
 
-	int flatLeftX, flatRightX, flatY;
-	float flatLeftZ, flatRightZ;
-	MyColor  *flatLeftColor, *flatRightColor;
+	MyVector3 flatLeft;
+	MyVector3 flatRight;
+	MyColor flatLeftColor, flatRightColor;
 };
 
 
@@ -33,8 +32,11 @@ public:
 	
 	void DrawTriangle(Vertex *v0, Vertex *v1, Vertex *v2);
 
-	//colors顺序为top,leftbottom, rightbottom
-	void DrawFlatTriangle(FlatTriangleArg *arg);
+	//平底
+	void DrawFlatBottomTriangle(FlatTriangleArg *arg);
+
+	//平顶
+	void DrawFlatTopTriangle(FlatTriangleArg *arg);
 
 	void Clear();
 
@@ -45,6 +47,8 @@ private:
 	float zBuffer[canvasSize][canvasSize];
 
 	inline void SetPixel(int x, int y, MyColor* c) {
+		/*if (x < 0 || x >= canvasSize || y < 0 || y >= canvasSize)
+			return;*/
 		uint8_t r = c->r * 255;
 		uint8_t g = c->g * 255;
 		uint8_t b = c->b * 255;
@@ -52,9 +56,9 @@ private:
 	}
 	//void SetPixel(int x, int y, UINT32 color); { bitMap[y][x] = color; }
 	
-	void DrawPixel(int x, int y, float z, MyColor* c);
+	//void DrawPixel(int x, int y, float z, MyColor* c);
 
-	void DrawScanningLine(int y, int left, float leftZ, MyColor* leftColor, int right, float rightZ, MyColor* rightColor);
+	void DrawLine(int y, int left, int right, MyColor* leftColor, MyColor* stepColor);
 };
 
 

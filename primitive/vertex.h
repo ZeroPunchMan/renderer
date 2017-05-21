@@ -1,10 +1,10 @@
 #pragma once
 
 #include "math3d.h"
-
+#include "transform.h"
 
 struct Vertex {
-	MyVector4 homoCoord;
+	HomoPoint3 homoCoord;
 	MyColor color;
 	Vertex(){}
 };

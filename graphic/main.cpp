@@ -6,19 +6,29 @@
 #include "TCHAR.h"
 #include "Canvas.h"
 #include "triangle.h"
+#include "matrix.h"
+#include "rotation.h"
+#include "scene.h"
+#include <time.h>  
 
 using namespace std;
 
 HRESULT D2D1Init(HWND hwnd);
 LRESULT CALLBACK WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void MyRenderTask();
+void Test();
+void MyInput();
 
 ID2D1HwndRenderTarget *pRT = NULL;
 Canvas *pCanvas = nullptr;
+Scene scene;
 
 #define WinSize	3000
 
-int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow){
+LARGE_INTEGER lastTime, interval;
+LARGE_INTEGER Frequency;
+
+int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow) {
 	const TCHAR CLASS_NAME[] = __T("sample class");
 	WNDCLASS wc = {};
 	wc.lpfnWndProc = WinProc;
@@ -39,9 +49,9 @@ int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow){
 		NULL,
 		hins,
 		NULL
-		);
+	);
 
-	if (hwnd == NULL){
+	if (hwnd == NULL) {
 		return 0;
 	}
 
@@ -54,15 +64,42 @@ int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow){
 	MyRenderTask();
 
 	MSG msg = {};
-	while (GetMessage(&msg, NULL, 0, 0)){
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
+	Test();
 
+	QueryPerformanceFrequency(&Frequency);
+	QueryPerformanceCounter(&lastTime);
+	for (;;) {
+		MSG msg;
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+			if (msg.message == WM_QUIT)
+				goto _quit;
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		else {
+			LARGE_INTEGER curTime;
+			
+			QueryPerformanceCounter(&curTime);
+			interval.QuadPart = curTime.QuadPart - lastTime.QuadPart;
+
+			interval.QuadPart *= 1000;
+			interval.QuadPart /= Frequency.QuadPart;
+
+			if (interval.QuadPart > 33) {
+				MyInput();
+				MyRenderTask();
+				
+				lastTime = curTime;
+				//MyLog(_T("%I64d"), interval.QuadPart);
+			}
+			Sleep(1);
+		}
+	}
+_quit:
 	return 0;
 }
 
-HRESULT D2D1Init(HWND hwnd){
+HRESULT D2D1Init(HWND hwnd) {
 	//d2d initialize
 	ID2D1Factory *pD2DFactory = NULL;
 	HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &pD2DFactory);
@@ -72,52 +109,125 @@ HRESULT D2D1Init(HWND hwnd){
 	hr = pD2DFactory->CreateHwndRenderTarget(
 		D2D1::RenderTargetProperties(),
 		D2D1::HwndRenderTargetProperties(
-		hwnd,
-		//D2D1::SizeU(rec.right - rec.left, rec.bottom - rec.top)
-		D2D1::SizeU(WinSize, WinSize)
+			hwnd,
+			//D2D1::SizeU(rec.right - rec.left, rec.bottom - rec.top)
+			D2D1::SizeU(WinSize, WinSize)
 		),
 		&pRT
-		);
+	);
 
 	return hr;
 }
 
-LRESULT CALLBACK WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam){
-	switch (uMsg){
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			return 0;
-		case WM_PAINT:
-			//MyRenderTask();
-			return 0;
-		case WVR_REDRAW:
-			MyRenderTask();
-			return 0;
+LRESULT CALLBACK WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+	static bool keyDown = false;
+	switch (uMsg) {
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	case WVR_REDRAW:
+		return 0;
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void MyRenderTask(){
-	Vertex v0,v1,v2;
-	v0.color = MyColor(1.0f, 0, 0, 1);
-	v1.color = MyColor(0, 1.0f, 0, 1);
-	v2.color = MyColor(0, 0, 1.0f, 1);
+#define SHIFTED 0x8000 
 
-	v0.homoCoord = MyVector4(0.5f, 0, 0, 0);
-	v1.homoCoord = MyVector4(0.51f, 0.5f, 0, 0);
-	v2.homoCoord = MyVector4(0.49f, 1, 0, 0); 
+void MyInput() { //要用大写字母
+	float deltaTime = interval.QuadPart / 1000.0f;
+	MyVector3 motion;
+	//前后
+	if (GetKeyState('W') & SHIFTED) {
+		motion.z = deltaTime * 100;
+	}
+	else if (GetKeyState('S') & SHIFTED) {
+		motion.z = -deltaTime * 100;
+	}
+	//左右
+	if (GetKeyState('A') & SHIFTED) {
+		motion.x = deltaTime * 50;
+	}
+	else if (GetKeyState('D') & SHIFTED) {
+		motion.x = -deltaTime * 50;
+	}
+	//上下
+	if (GetKeyState(VK_UP) & SHIFTED) {
+		motion.y = deltaTime * 50;
+	}
+	else if (GetKeyState(VK_DOWN) & SHIFTED) {
+		motion.y = -deltaTime * 50;
+	}
 
+	static float rotationY = 0, rotationX = 0;
+	static bool inRotation = false;
+	static POINT lastPos;
+	if (GetKeyState(VK_RBUTTON) & SHIFTED) {
+		if (inRotation == false) {
+			if (GetCursorPos(&lastPos)) {
+				inRotation = true;
+			}
+		}
+		else
+		{
+			POINT curPos;
+			if (GetCursorPos(&curPos)) {
+				LONG x = curPos.x - lastPos.x;
+				LONG y = curPos.y - lastPos.y;
+				rotationX += -(float)y / 1366.0f * 180;
+				rotationY += -(float)x / 768.0f * 180;
+				if (rotationX < -89)
+					rotationX = -89; 
+				if (rotationX > 89)
+					rotationX = 89;
+				lastPos = curPos;
+			}
+		}
+	}
+	else {
+		inRotation = false;
+	}
+	if (GetKeyState(VK_LBUTTON) & SHIFTED) {
+		MyLog(_T("%.2f, %.2f"), rotationX, rotationY);
+	}
+
+	scene.camera.Move(motion);
+	scene.camera.transform.rotation.EulerAngles(rotationX, rotationY, 0);
+}
+
+
+void MyRenderTask() {
 	pCanvas->Clear();
-	pCanvas->DrawTriangle(&v0, &v1, &v2);
-
-	MyLog(_T("%.2f, %d, xxxxx"), 10.3f, 20);
-
+	scene.Render(pCanvas);
 	ID2D1Bitmap* bitMap = pCanvas->GetBitMap();
 	D2D1_RECT_F rectD = D2D1::RectF(0, 0, WinSize, WinSize);
 	D2D1_SIZE_U size = bitMap->GetPixelSize();
-	D2D1_RECT_F rectS = D2D1::RectF(0, 0, size.width-1, size.height-1);
+	D2D1_RECT_F rectS = D2D1::RectF(0, 0, size.width - 1, size.height - 1);
 	pRT->BeginDraw();
 	pRT->DrawBitmap(bitMap, &rectD, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &rectS);
 	pRT->EndDraw();
 }
 
+void Test() {
+	//float x = 35, y = 27, z = 185;
+	//Rotation rz(MyVector3(0,0,-1), z); //z
+	//Rotation rx(MyVector3(-1,0,0), x);//x
+	//Rotation ry(MyVector3(0,-1,0), y);//y
+
+	//Rotation re(x, y, z);
+	//MyVector3 v(175, 28, 11);
+	//MyVector3 v1 = ry * rx * rz * v;
+	//MyVector3 v2 = re * v;
+
+	//MyLog(v1.ToString().c_str());
+	//MyLog(v2.ToString().c_str());
+
+	/*Rotation rq(MyVector3(0, 0, 1), 90);
+	Rotation re(60, 80, 90);
+	MyVector3 v(175, 28, 11);
+	MyVector3 v1 = rq.Rotate(v);
+	MyVector3 v2 = re.Rotate(v);
+	MyLog(v1.ToString().c_str());
+	MyLog(v2.ToString().c_str());
+	MyLog(rq.ToString().c_str());
+	MyLog(re.ToString().c_str());*/
+}

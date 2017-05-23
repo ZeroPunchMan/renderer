@@ -2,16 +2,21 @@
 
 #include "windows.h"
 #include "d2d1.h"
-#include "triangle.h"
+#include "math3d.h"
+#include "vertex.h"
+#include "texture.h"
 
+extern Texture* texture;
 //平底/顶三角形参数
 struct FlatTriangleArg {
 	MyVector3 tine;
 	MyColor tineColor;
+	MyVector2 tineUV;
 
 	MyVector3 flatLeft;
 	MyVector3 flatRight;
 	MyColor flatLeftColor, flatRightColor;
+	MyVector2 flatLeftUV, flatRightUV;
 };
 
 
@@ -58,7 +63,7 @@ private:
 	
 	//void DrawPixel(int x, int y, float z, MyColor* c);
 
-	void DrawLine(int y, int left, int right, MyColor* leftColor, MyColor* stepColor);
+	void DrawLine(int y, int left, int right, MyColor* leftColor, MyColor* stepColor, MyVector2* leftUV, MyVector2* stepUV);
 };
 
 

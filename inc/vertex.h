@@ -6,5 +6,6 @@
 struct Vertex {
 	HomoPoint3 homoCoord;
 	MyColor color;
+	MyVector2 uv;
 	Vertex(){}
 };

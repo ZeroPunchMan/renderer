@@ -5,7 +5,6 @@
 #include "math.h"
 #include "TCHAR.h"
 #include "Canvas.h"
-#include "triangle.h"
 #include "matrix.h"
 #include "rotation.h"
 #include "scene.h"
@@ -86,8 +85,11 @@ int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow) {
 			interval.QuadPart /= Frequency.QuadPart;
 
 			if (interval.QuadPart > 33) {
-				MyInput();
-				MyRenderTask();
+				HWND ahwnd = GetForegroundWindow();
+				if (ahwnd == hwnd) {
+					MyInput();
+					MyRenderTask();
+				}
 				
 				lastTime = curTime;
 				//MyLog(_T("%I64d"), interval.QuadPart);
@@ -186,11 +188,13 @@ void MyInput() { //ÒªÓÃ´óÐ´×ÖÄ¸
 	else {
 		inRotation = false;
 	}
-	if (GetKeyState(VK_LBUTTON) & SHIFTED) {
-		MyLog(_T("%.2f, %.2f"), rotationX, rotationY);
-	}
 
-	scene.camera.Move(motion);
+	/*if (GetKeyState(VK_LBUTTON) & SHIFTED) {
+		MyLog(_T("%.2f, %.2f"), rotationX, rotationY);
+	}*/
+
+	if(motion.x != 0 || motion.y != 0 || motion.z != 0)
+		scene.camera.Move(motion);
 	scene.camera.transform.rotation.EulerAngles(rotationX, rotationY, 0);
 }
 
@@ -208,26 +212,8 @@ void MyRenderTask() {
 }
 
 void Test() {
-	//float x = 35, y = 27, z = 185;
-	//Rotation rz(MyVector3(0,0,-1), z); //z
-	//Rotation rx(MyVector3(-1,0,0), x);//x
-	//Rotation ry(MyVector3(0,-1,0), y);//y
-
-	//Rotation re(x, y, z);
-	//MyVector3 v(175, 28, 11);
-	//MyVector3 v1 = ry * rx * rz * v;
-	//MyVector3 v2 = re * v;
-
-	//MyLog(v1.ToString().c_str());
-	//MyLog(v2.ToString().c_str());
-
-	/*Rotation rq(MyVector3(0, 0, 1), 90);
-	Rotation re(60, 80, 90);
-	MyVector3 v(175, 28, 11);
-	MyVector3 v1 = rq.Rotate(v);
-	MyVector3 v2 = re.Rotate(v);
-	MyLog(v1.ToString().c_str());
-	MyLog(v2.ToString().c_str());
-	MyLog(rq.ToString().c_str());
-	MyLog(re.ToString().c_str());*/
+	/*Rotation r(MyVector3(0, 1, 0), 126.1f);
+	MyVector3 v(0, 0, -5.3f);
+	v = r*v;
+	MyLog(v.ToString().c_str());*/
 }

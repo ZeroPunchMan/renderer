@@ -73,14 +73,14 @@ public:
 		return res;
 	}
 
-	wstring ToString() {
+	string ToString() {
 		TCHAR buff[512];
-		swprintf(buff, _T("{%.2f, %.2f, %.2f, %.2f}\r\n{%.2f, %.2f, %.2f, %.2f}\r\n{%.2f, %.2f, %.2f, %.2f}\r\n{%.2f, %.2f, %.2f, %.2f}\r\n"),
+		sprintf(buff, _T("{%.2f, %.2f, %.2f, %.2f}\r\n{%.2f, %.2f, %.2f, %.2f}\r\n{%.2f, %.2f, %.2f, %.2f}\r\n{%.2f, %.2f, %.2f, %.2f}\r\n"),
 			data[0][0], data[0][1], data[0][2], data[0][3], 
 			data[1][0], data[1][1], data[1][2], data[1][3], 
 			data[2][0], data[2][1], data[2][2], data[2][3], 
 			data[3][0], data[3][1], data[3][2], data[3][3]);
-		return wstring(buff);
+		return string(buff);
 	}
 
 	MyMat4 GetTranspose() {

@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PlatformToolset>v140</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PlatformToolset>v140</PlatformToolset>
@@ -96,13 +96,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>d2d1.lib;blas_win64_MT.lib;lapack_win64_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\vs_prj\armadillo\examples\lib_win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\primitive;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
   </ItemDefinitionGroup>
@@ -117,29 +117,30 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\primitive\triangle.cpp" />
-    <ClCompile Include="Canvas.cpp" />
-    <ClCompile Include="LineRastrz.cpp" />
+    <ClCompile Include="..\src\Canvas.cpp" />
+    <ClCompile Include="..\src\LineRastrz.cpp" />
+    <ClCompile Include="..\src\MyLog.cpp" />
+    <ClCompile Include="..\src\scene.cpp" />
+    <ClCompile Include="..\src\texture.cpp" />
+    <ClCompile Include="..\src\TriRastrz.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MyLog.cpp" />
-    <ClCompile Include="scene.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TriRastrz.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\camera.h" />
-    <ClInclude Include="..\transform.h" />
-    <ClInclude Include="..\math3d.h" />
-    <ClInclude Include="..\matrix.h" />
-    <ClInclude Include="..\primitive\triangle.h" />
+    <ClInclude Include="..\inc\camera.h" />
+    <ClInclude Include="..\inc\math3d.h" />
+    <ClInclude Include="..\inc\matrix.h" />
+    <ClInclude Include="..\inc\MyLog.h" />
+    <ClInclude Include="..\inc\rotation.h" />
+    <ClInclude Include="..\inc\scene.h" />
+    <ClInclude Include="..\inc\stb_image.h" />
+    <ClInclude Include="..\inc\texture.h" />
+    <ClInclude Include="..\inc\transform.h" />
+    <ClInclude Include="..\inc\vertex.h" />
     <ClInclude Include="..\primitive\vertex.h" />
-    <ClInclude Include="..\rotation.h" />
-    <ClInclude Include="Canvas.h" />
-    <ClInclude Include="MyLog.h" />
-    <ClInclude Include="scene.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

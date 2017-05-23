@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "triangle.h"
 #include "canvas.h"
 #include "camera.h"
+#include "texture.h"
 
 using namespace std;
 class Scene
@@ -20,6 +20,8 @@ public:
 	void DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2);
 	HomoPoint3 WorldToCamera(HomoPoint3 point);
 	HomoPoint3 CameraToNDC(HomoPoint3 point);
+
+	
 };
 
 

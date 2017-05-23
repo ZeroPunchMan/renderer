@@ -27,57 +27,60 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\primitive\triangle.cpp">
-      <Filter>Primitive</Filter>
-    </ClCompile>
-    <ClCompile Include="Canvas.cpp">
-      <Filter>Canvas</Filter>
-    </ClCompile>
-    <ClCompile Include="TriRastrz.cpp">
-      <Filter>Canvas</Filter>
-    </ClCompile>
-    <ClCompile Include="LineRastrz.cpp">
-      <Filter>Canvas</Filter>
-    </ClCompile>
-    <ClCompile Include="MyLog.cpp">
+    <ClCompile Include="..\src\MyLog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="scene.cpp">
+    <ClCompile Include="..\src\scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LineRastrz.cpp">
+      <Filter>Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\TriRastrz.cpp">
+      <Filter>Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Canvas.cpp">
+      <Filter>Canvas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyLog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\math3d.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\primitive\triangle.h">
-      <Filter>Primitive</Filter>
-    </ClInclude>
-    <ClInclude Include="Canvas.h">
-      <Filter>Canvas</Filter>
     </ClInclude>
     <ClInclude Include="..\primitive\vertex.h">
       <Filter>Primitive</Filter>
     </ClInclude>
-    <ClInclude Include="..\matrix.h">
+    <ClInclude Include="..\inc\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\rotation.h">
+    <ClInclude Include="..\inc\math3d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\camera.h">
+    <ClInclude Include="..\inc\matrix.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="scene.h">
+    <ClInclude Include="..\inc\MyLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\transform.h">
+    <ClInclude Include="..\inc\rotation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inc\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

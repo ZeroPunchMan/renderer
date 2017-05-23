@@ -113,7 +113,7 @@ public:
 		this->mat.Transpose();
 	}
 
-	wstring ToString() {
+	string ToString() {
 		return this->mat.ToString();
 	}
 };

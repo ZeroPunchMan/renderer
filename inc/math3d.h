@@ -4,17 +4,45 @@
 
 struct MyVector2
 {
-	float x, y;
-
-	MyVector2(float x, float y) {
+	double x, y;
+	MyVector2() {
+		this->x = 0;
+		this->y = 0;
+	}
+	MyVector2(double x, double y) {
 		this->x = x;
 		this->y = y;
+	}
+
+	MyVector2 operator*(double a) {
+		return MyVector2(this->x * a,
+			this->y * a);
+	}
+	MyVector2 operator/(double a) {
+		return MyVector2(this->x / a,
+			this->y / a);
+	}
+
+	MyVector2 operator+(MyVector2 other) {
+		return MyVector2(this->x + other.x,
+			this->y + other.y);
+	}
+
+	MyVector2 operator+=(MyVector2 other) {
+		this->x += other.x;
+		this->y += other.y;
+		return *this;
+	}
+
+	MyVector2 operator-(MyVector2 other) {
+		return MyVector2(this->x - other.x,
+			this->y - other.y);
 	}
 };
 
 struct MyVector2Int {
 	int x, y;
-	MyVector2Int(){}
+	MyVector2Int() {}
 	MyVector2Int(int x, int y) {
 		this->x = x;
 		this->y = y;
@@ -25,7 +53,7 @@ struct MyVector2Int {
 struct MyVector3
 {
 	float x, y, z;
-	MyVector3(){
+	MyVector3() {
 		x = y = z = 0;
 	}
 
@@ -71,18 +99,18 @@ struct MyVector3
 		this->z /= len;
 	}
 
-	wstring ToString() {
+	string ToString() {
 		TCHAR buff[128];
-		swprintf(buff, _T("{%.2f, %.2f, %.2f}"),
+		sprintf(buff, _T("{%.2f, %.2f, %.2f}"),
 			x, y, z);
-		return wstring(buff);
+		return string(buff);
 	}
 };
 
 struct MyColor {
 	float r, g, b, a;
 
-	MyColor(){}
+	MyColor() {}
 
 	MyColor(float r, float g, float b, float a) {
 		this->r = r;
@@ -99,10 +127,10 @@ struct MyColor {
 	}
 
 	MyColor operator*(float x) {
-		return MyColor(this->r * x, 
-						this->g * x, 
-						this->b * x, 
-						this->a * x);
+		return MyColor(this->r * x,
+			this->g * x,
+			this->b * x,
+			this->a * x);
 	}
 
 	MyColor operator/(float x) {
@@ -114,9 +142,9 @@ struct MyColor {
 
 	MyColor operator+(MyColor rightColor) {
 		return MyColor(this->r + rightColor.r,
-						this->g + rightColor.g,
-						this->b + rightColor.b,
-						this->a + rightColor.a);
+			this->g + rightColor.g,
+			this->b + rightColor.b,
+			this->a + rightColor.a);
 	}
 
 	MyColor operator-(MyColor rightColor) {
@@ -134,10 +162,12 @@ struct MyColor {
 		return *this;
 	}
 
-	//rate为靠近c2的程度
-	static MyColor Interpolate(MyColor* c1, MyColor* c2, float rate) {
-		MyColor newColor = *c1 * (1 - rate) + *c2 * rate;
-		return newColor;
+	MyColor operator*=(MyColor rightColor) {
+		this->r *= rightColor.r;
+		this->g *= rightColor.g;
+		this->b *= rightColor.b;
+		this->a *= rightColor.a;
+		return *this;
 	}
 
 private:
@@ -160,7 +190,7 @@ private:
 		if (this->a < 0)
 			this->a = 0;
 	}
-	
+
 };
 
 struct HomoPoint3
@@ -168,7 +198,7 @@ struct HomoPoint3
 	MyVector3 pos;
 	float w;
 
-	HomoPoint3(){}
+	HomoPoint3() {}
 	HomoPoint3(float x, float y, float z, float w) {
 		pos.x = x;
 		pos.y = y;
@@ -234,11 +264,11 @@ struct HomoPoint3
 		return this->pos;
 	}
 
-	wstring ToString() {
+	string ToString() {
 		TCHAR buff[128];
-		swprintf(buff, _T("{%.2f, %.2f, %.2f, %.2f}"),
+		sprintf(buff, _T("{%.2f, %.2f, %.2f, %.2f}"),
 			pos.x, pos.y, pos.z, w);
-		return wstring(buff);
+		return string(buff);
 	}
 };
 

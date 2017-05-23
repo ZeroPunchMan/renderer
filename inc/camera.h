@@ -33,7 +33,7 @@ public:
 	//z为向前,y为向上,x为向左
 	void Move(MyVector3 dist) {
 		MyVector3 mov(-dist.x, dist.y, -dist.z);
-		mov = transform.rotation.GetInverse() * mov;
+		mov = transform.rotation * mov;
 		transform.position += mov;
 	}
 

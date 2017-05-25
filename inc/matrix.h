@@ -3,13 +3,13 @@
 
 class MyMat4 {
 public:
-	float data[4][4] = {1,0,0,0,
+	double data[4][4] = {1,0,0,0,
 						0,1,0,0,
 						0,0,1,0,
 						0,0,0,1};
 
 	MyMat4(){}
-	MyMat4(float d[4][4]) {
+	MyMat4(double d[4][4]) {
 		for (int i = 0; i < 4; i++) {
 			for (int k = 0; k < 4; k++)
 				data[i][k] = d[i][k];

@@ -11,22 +11,22 @@ private:
 
 public:
 	Rotation() {}
-	Rotation(MyVector3 axis, float angle) {
+	Rotation(MyVector3 axis, double angle) {
 		Quaternion(axis, angle);
 	}
 
-	Rotation(float x, float y, float z) {
+	Rotation(double x, double y, double z) {
 		EulerAngles(x, y, z);
 	}
 
 	//ÉèÖÃÐý×ª¾ØÕó
-	void Quaternion(MyVector3 axis, float angle) {
+	void Quaternion(MyVector3 axis, double angle) {
 		axis.Normalize();
-		float sinHalfAngle = sin(angle * PI / 360);
-		float qw = cos(angle * PI / 360);
-		float qx = sinHalfAngle * axis.x;
-		float qy = sinHalfAngle * axis.y;
-		float qz = sinHalfAngle * axis.z;
+		double sinHalfAngle = sin(angle * PI / 360);
+		double qw = cos(angle * PI / 360);
+		double qx = sinHalfAngle * axis.x;
+		double qy = sinHalfAngle * axis.y;
+		double qz = sinHalfAngle * axis.z;
 		mat.data[0][0] = 1 - 2 * (qy*qy + qz*qz);
 		mat.data[0][1] = 2 * (qx*qy - qw*qz);
 		mat.data[0][2] = 2 * (qx*qz + qw*qy);
@@ -49,13 +49,13 @@ public:
 	}
 
 	//ÓÃÅ·À­½ÇÉèÖÃÐý×ª¾ØÕó
-	void EulerAngles(float x, float y, float z) {
-		float sinx = sin(x * PI / 180);
-		float cosx = cos(x * PI / 180);
-		float siny = sin(y * PI / 180);
-		float cosy = cos(y * PI / 180);
-		float sinz = sin(z * PI / 180);
-		float cosz = cos(z * PI / 180);
+	void EulerAngles(double x, double y, double z) {
+		double sinx = sin(x * PI / 180);
+		double cosx = cos(x * PI / 180);
+		double siny = sin(y * PI / 180);
+		double cosy = cos(y * PI / 180);
+		double sinz = sin(z * PI / 180);
+		double cosz = cos(z * PI / 180);
 
 		this->mat.data[0][0] = cosy * cosz + sinx * siny * sinz;
 		this->mat.data[0][1] = -cosy * sinz + sinx * siny * cosz;

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-//void Canvas::LineBres(float xs, float ys, float xe, float ye) {
+//void Canvas::LineBres(double xs, double ys, double xe, double ye) {
 //	int xSrc = xs * (canvasSize - 1);
 //	int ySrc = ys * (canvasSize - 1);
 //	int xEnd = xe * (canvasSize - 1);
@@ -43,7 +43,7 @@
 //	}
 //}
 //
-//void Canvas::LineDDA(float xs, float ys, float xe, float ye){
+//void Canvas::LineDDA(double xs, double ys, double xe, double ye){
 //	int xSrc = xs * (canvasSize - 1);
 //	int ySrc = ys * (canvasSize - 1);
 //	int xEnd = xe * (canvasSize - 1);
@@ -51,19 +51,19 @@
 //	int dx = xEnd - xSrc;
 //	int dy = yEnd - ySrc;
 //
-//	float incX, incY;
-//	float steps;
+//	double incX, incY;
+//	double steps;
 //
 //	if (abs(dx) < abs(dy)){ //k < 1
-//		steps = (float)abs(dy);
+//		steps = (double)abs(dy);
 //	}
 //	else { //k >= 1
-//		steps = (float)abs(dx);
+//		steps = (double)abs(dx);
 //	}
-//	incX = (float)dx / steps;
-//	incY = (float)dy / steps;
+//	incX = (double)dx / steps;
+//	incY = (double)dy / steps;
 //
-//	float x = xSrc, y = ySrc;
+//	double x = xSrc, y = ySrc;
 //	for (int i = 0; i <= steps; i++){
 //		SetPixel(x, y, 0xff0000);
 //		x += incX;

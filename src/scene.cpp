@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "scene.h"
 
-
-
 Scene::Scene()
 {
 	
@@ -16,13 +14,9 @@ Scene::~Scene()
 void Scene::Render(Canvas* pCanvas) {
 	//MyLog(camera.mat.ToString().c_str());
 	Vertex v0, v1, v2, v3;
-	v0.color = MyColor(1, 1, 1);
-	v1.color = MyColor(1, 1, 1);
-	v2.color = MyColor(1, 1, 1);
-	v3.color = MyColor(1, 1, 1);
 
-	float depth = 50;
-	float size = depth * 0.3f;
+	double depth = 50;
+	double size = depth * 0.3f;
 	v0.homoCoord = HomoPoint3(-size, size, -depth);
 	v1.homoCoord = HomoPoint3(size, size, -depth);
 	v2.homoCoord = HomoPoint3(size, -size, -depth);
@@ -33,8 +27,9 @@ void Scene::Render(Canvas* pCanvas) {
 	v2.uv = MyVector2(1, 1);
 	v3.uv = MyVector2(0, 1);
 
-	DrawTriangle(pCanvas, v0, v1, v2);
-	DrawTriangle(pCanvas, v0, v2, v3);
+	DrawTriangle(pCanvas, v0, v1, v3);
+	DrawTriangle(pCanvas, v1, v2, v3);
+	MyLog("render");
 }
 
 HomoPoint3 Scene::WorldToCamera(HomoPoint3 point) {
@@ -49,7 +44,8 @@ HomoPoint3 Scene::WorldToCamera(HomoPoint3 point) {
 
 HomoPoint3 Scene::CameraToNDC(HomoPoint3 point) {
 	HomoPoint3 newPoint = this->camera.PerspectiveProj(point);
-	newPoint.Homogenize();
+	newPoint.pos /= newPoint.w;
+	//newPoint.Homogenize();
 	return newPoint;
 }
 
@@ -98,14 +94,12 @@ void Scene::DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2) {
 	if (mid.homoCoord.pos.z >= this->camera.n) {
 		//截取一个三角形并渲染
 		Vertex vn, vm;
-		float rate = (camera.n - min.homoCoord.pos.z) / (max.homoCoord.pos.z - min.homoCoord.pos.z);
+		double rate = (camera.n - min.homoCoord.pos.z) / (max.homoCoord.pos.z - min.homoCoord.pos.z);
 		vn.homoCoord = max.homoCoord * rate + min.homoCoord * (1 - rate);
-		vn.color = max.color * rate + min.color * (1 - rate);
 		vn.uv = max.uv * rate + min.uv * (1 - rate);
 
 		rate = (camera.n - min.homoCoord.pos.z) / (mid.homoCoord.pos.z - min.homoCoord.pos.z);
 		vm.homoCoord = mid.homoCoord * rate + min.homoCoord * (1 - rate);
-		vm.color = mid.color * rate + min.color * (1 - rate);
 		vm.uv = mid.uv * rate + min.uv * (1 - rate);
 
 		min.homoCoord = this->CameraToNDC(min.homoCoord);
@@ -116,14 +110,12 @@ void Scene::DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2) {
 	else {
 		//截取两个三角形并渲染
 		Vertex vn, vm;
-		float rate = (camera.n - min.homoCoord.pos.z) / (max.homoCoord.pos.z - min.homoCoord.pos.z);
+		double rate = (camera.n - min.homoCoord.pos.z) / (max.homoCoord.pos.z - min.homoCoord.pos.z);
 		vn.homoCoord = max.homoCoord * rate + min.homoCoord * (1 - rate);
-		vn.color = max.color * rate + min.color * (1 - rate);
 		vn.uv = max.uv * rate + min.uv * (1 - rate);
 
 		rate = (camera.n - mid.homoCoord.pos.z) / (max.homoCoord.pos.z - mid.homoCoord.pos.z);
 		vm.homoCoord = max.homoCoord * rate + mid.homoCoord * (1 - rate);
-		vm.color = max.color * rate + mid.color * (1 - rate);
 		vm.uv = max.uv * rate + mid.uv * (1 - rate);
 
 		min.homoCoord = this->CameraToNDC(min.homoCoord);

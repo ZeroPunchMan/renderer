@@ -52,22 +52,41 @@ struct MyVector2Int {
 
 struct MyVector3
 {
-	float x, y, z;
+	double x, y, z;
 	MyVector3() {
 		x = y = z = 0;
 	}
 
-	MyVector3(float x, float y, float z) {
+	MyVector3(double x, double y, double z) {
 		this->x = x;
 		this->y = y;
 		this->z = z;
 	}
 
-	MyVector3 operator*=(float a) {
+	MyVector3 operator*(double a) {
+		return MyVector3(this->x * a, 
+			this->y * a,
+			this->z * a);
+	}
+
+	MyVector3 operator*=(double a) {
 		this->x *= a;
 		this->y *= a;
 		this->z *= a;
 		return *this;
+	}
+
+	MyVector3 operator/=(double a) {
+		this->x /= a;
+		this->y /= a;
+		this->z /= a;
+		return *this;
+	}
+
+	MyVector3 operator+(MyVector3 other) {
+		return MyVector3(this->x + other.x,
+			this->y + other.y,
+			this->z + other.z);
 	}
 
 	MyVector3 operator+=(MyVector3 other) {
@@ -84,12 +103,12 @@ struct MyVector3
 		return *this;
 	}
 
-	float Length() {
+	double Length() {
 		return sqrtf(x*x + y*y + z*z);
 	}
 
 	void Normalize() {
-		float len = this->Length();
+		double len = this->Length();
 		if (len == 0) {
 			MyLog(_T("MyVector3.Normalize >> length is 0"));
 			return;
@@ -108,32 +127,32 @@ struct MyVector3
 };
 
 struct MyColor {
-	float r, g, b, a;
+	double r, g, b, a;
 
 	MyColor() {}
 
-	MyColor(float r, float g, float b, float a) {
+	MyColor(double r, double g, double b, double a) {
 		this->r = r;
 		this->g = g;
 		this->b = b;
 		this->a = a;
 	}
 
-	MyColor(float r, float g, float b) {
+	MyColor(double r, double g, double b) {
 		this->r = r;
 		this->g = g;
 		this->b = b;
 		this->a = 1.0f;
 	}
 
-	MyColor operator*(float x) {
+	MyColor operator*(double x) {
 		return MyColor(this->r * x,
 			this->g * x,
 			this->b * x,
 			this->a * x);
 	}
 
-	MyColor operator/(float x) {
+	MyColor operator/(double x) {
 		return MyColor(this->r / x,
 			this->g / x,
 			this->b / x,
@@ -196,17 +215,17 @@ private:
 struct HomoPoint3
 {
 	MyVector3 pos;
-	float w;
+	double w;
 
 	HomoPoint3() {}
-	HomoPoint3(float x, float y, float z, float w) {
+	HomoPoint3(double x, double y, double z, double w) {
 		pos.x = x;
 		pos.y = y;
 		pos.z = z;
 		this->w = w;
 	}
 
-	HomoPoint3(float x, float y, float z) {
+	HomoPoint3(double x, double y, double z) {
 		pos.x = x;
 		pos.y = y;
 		pos.z = z;
@@ -229,7 +248,7 @@ struct HomoPoint3
 		w = 1.0f;
 	}
 
-	HomoPoint3 operator*(float a) {
+	HomoPoint3 operator*(double a) {
 		return HomoPoint3(pos.x * a,
 			pos.y * a,
 			pos.z * a,
@@ -274,18 +293,18 @@ struct HomoPoint3
 
 //struct MyVector4
 //{
-//	float x, y, z, w;
+//	double x, y, z, w;
 //
 //	MyVector4(){}
 //
-//	MyVector4(float x, float y, float z, float w) {
+//	MyVector4(double x, double y, double z, double w) {
 //		this->x = x;
 //		this->y = y;
 //		this->z = z;
 //		this->w = w;
 //	}
 //
-//	MyVector4 operator*(float a) {
+//	MyVector4 operator*(double a) {
 //		return MyVector4(this->x * a,
 //			this->y * a,
 //			this->z * a,

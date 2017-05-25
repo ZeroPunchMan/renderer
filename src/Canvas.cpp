@@ -28,7 +28,7 @@ ID2D1Bitmap* Canvas::GetBitMap(){
 	return this->pBitMap;
 }
 
-//void Canvas::DrawPixel(int x, int y, float z, MyColor* c) {
+//void Canvas::DrawPixel(int x, int y, double z, MyColor* c) {
 //	if (z > zBuffer[x][y]) {
 //		this->SetPixel(x, y, c);
 //		zBuffer[x][y] = z;

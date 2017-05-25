@@ -17,7 +17,7 @@ public:
 	}
 	~Camera() {}
 
-	float l, r, t, b, n, f; //frustum参数
+	double l, r, t, b, n, f; //frustum参数
 
 	Transform transform;
 

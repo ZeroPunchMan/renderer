@@ -141,6 +141,7 @@
     <ClInclude Include="..\inc\transform.h" />
     <ClInclude Include="..\inc\vertex.h" />
     <ClInclude Include="..\primitive\vertex.h" />
+    <ClInclude Include="Canvas.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -134,9 +134,9 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 }
 
 #define SHIFTED 0x8000 
-
+static double rotationY = 0, rotationX = 0;
 void MyInput() { //要用大写字母
-	float deltaTime = interval.QuadPart / 1000.0f;
+	double deltaTime = interval.QuadPart / 1000.0f;
 	MyVector3 motion;
 	//前后
 	if (GetKeyState('W') & SHIFTED) {
@@ -152,16 +152,32 @@ void MyInput() { //要用大写字母
 	else if (GetKeyState('D') & SHIFTED) {
 		motion.x = -deltaTime * 50;
 	}
+
 	//上下
-	if (GetKeyState(VK_UP) & SHIFTED) {
+	if (GetKeyState('I') & SHIFTED) {
 		motion.y = deltaTime * 50;
 	}
-	else if (GetKeyState(VK_DOWN) & SHIFTED) {
+	else if (GetKeyState('K') & SHIFTED) {
 		motion.y = -deltaTime * 50;
 	}
 
-	static float rotationY = 0, rotationX = 0;
-	static bool inRotation = false;
+	//上下
+	if (GetKeyState(VK_UP) & SHIFTED) {
+		rotationX += deltaTime * 50;
+	}
+	else if (GetKeyState(VK_DOWN) & SHIFTED) {
+		rotationX += -deltaTime * 50;
+	}
+
+	//左右
+	if (GetKeyState(VK_RIGHT) & SHIFTED) {
+		rotationY += -deltaTime * 50;
+	}
+	else if (GetKeyState(VK_LEFT) & SHIFTED) {
+		rotationY += deltaTime * 50;
+	}
+
+	/*static bool inRotation = false;
 	static POINT lastPos;
 	if (GetKeyState(VK_RBUTTON) & SHIFTED) {
 		if (inRotation == false) {
@@ -175,8 +191,8 @@ void MyInput() { //要用大写字母
 			if (GetCursorPos(&curPos)) {
 				LONG x = curPos.x - lastPos.x;
 				LONG y = curPos.y - lastPos.y;
-				rotationX += -(float)y / 1366.0f * 180;
-				rotationY += -(float)x / 768.0f * 180;
+				rotationX += -(double)y / 1366.0f * 180;
+				rotationY += -(double)x / 768.0f * 180;
 				if (rotationX < -89)
 					rotationX = -89; 
 				if (rotationX > 89)
@@ -187,7 +203,7 @@ void MyInput() { //要用大写字母
 	}
 	else {
 		inRotation = false;
-	}
+	}*/
 
 	/*if (GetKeyState(VK_LBUTTON) & SHIFTED) {
 		MyLog(_T("%.2f, %.2f"), rotationX, rotationY);
@@ -212,8 +228,27 @@ void MyRenderTask() {
 }
 
 void Test() {
-	/*Rotation r(MyVector3(0, 1, 0), 126.1f);
-	MyVector3 v(0, 0, -5.3f);
-	v = r*v;
-	MyLog(v.ToString().c_str());*/
+	MyVector3 A(10, 25, -13);
+	MyVector3 B(82, -37, -57);
+	double p = 0.3f, n = -1;
+	double r = (p*A.z) / (p*A.z + (1 - p)*B.z);
+	MyVector3 C = A * p + B * (1 - p);
+	//p0
+	A.x = A.x * n / A.z;
+	A.y = A.y * n / A.z;
+	A.z = n;
+	//p1
+	B.x = B.x * n / B.z;
+	B.y = B.y * n / B.z;
+	B.z = n;
+
+	//p
+	C.x = C.x * n / C.z;
+	C.y = C.y * n / C.z;
+	C.z = n;
+	
+	MyVector3 D = A * r + B * (1 - r);
+	MyLog("p: %.2f, r: %.2f", p, r);
+	MyLog("C: %s", C.ToString().c_str());
+	MyLog("D: %s", D.ToString().c_str());
 }

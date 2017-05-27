@@ -14,16 +14,16 @@ bool doubleEqual(double a, double b) {
 void Canvas::DrawLine(int y, int left, int right, MyVector2* leftUV, MyVector2* rightUV, double leftZ, double rightZ) {
 	if (left >= right)
 		return;
+	MyVector2 uv;
+	MyColor textureColor;
 	//double z = leftZ;
 	for (int x = left; x <= right; x++) {
 		double r = ((double)right - x) / (right - left);
 		double p = r * rightZ / (r * rightZ + (1 - r) * leftZ);
-		MyVector2 uv = *leftUV * p + *rightUV * (1 - p);
-		MyColor textureColor = texture->GetPixel(uv.x, uv.y);
-		//textureColor *= color;
-		SetPixel(x, y, &textureColor);
-		//DrawPixel(i, y, z, &color);
-		//z += stepZ;
+		double z = leftZ * p + rightZ * (1 - p);
+		MyVector2::Interpolate(leftUV, rightUV, p, 1-p, &uv);
+		texture->GetPixel(uv.x, uv.y, &textureColor);
+		SetPixel(x, y, &textureColor, z);
 	}
 }
 
@@ -56,12 +56,14 @@ void Canvas::DrawFlatTopTriangle(FlatTriangleArg arg) {
 		if (r > 1) //精度处理问题,有溢出,暂时这样
 			r = 1;
 		double p = r * arg.tine.z / (r * arg.tine.z + (1 - r) * arg.flatLeft.z);
-		leftUV = arg.flatLeftUV * p + arg.tineUV * (1 - p);
+		//leftUV = arg.flatLeftUV * p + arg.tineUV * (1 - p);
+		MyVector2::Interpolate(&arg.flatLeftUV, &arg.tineUV, p, 1-p, &leftUV);
 		double leftZ = arg.flatLeft.z * p + arg.tine.z * (1 - p);
 		leftX = r * arg.flatLeft.x + (1-r) * arg.tine.x;
 		
 		p = r * arg.tine.z / (r * arg.tine.z + (1 - r) * arg.flatRight.z);
-		rightUV = arg.flatRightUV * p + arg.tineUV * (1 - p);
+		//rightUV = arg.flatRightUV * p + arg.tineUV * (1 - p);
+		MyVector2::Interpolate(&arg.flatRightUV, &arg.tineUV, p, 1 - p, &rightUV);
 		double rightZ = arg.flatRight.z * p + arg.tine.z * (1 - p);
 		rightX = r* arg.flatRight.x + (1-r)*arg.tine.x;
 		
@@ -102,12 +104,14 @@ void Canvas::DrawFlatBottomTriangle(FlatTriangleArg arg) {
 		if (r > 1)
 			r = 1;
 		double p = r * arg.flatLeft.z / (r * arg.flatLeft.z + (1 - r) * arg.tine.z);
-		leftUV = arg.tineUV * p + arg.flatLeftUV * (1 - p);
+		//leftUV = arg.tineUV * p + arg.flatLeftUV * (1 - p);
+		MyVector2::Interpolate(&arg.tineUV, &arg.flatLeftUV, p, 1-p, &leftUV);
 		double leftZ = arg.tine.z * p + arg.flatLeft.z * (1 - p);
 		leftX = arg.tine.x * r + arg.flatLeft.x * (1 - r);
 
 		p = r * arg.flatRight.z / (r * arg.flatRight.z + (1 - r) * arg.tine.z);
-		rightUV = arg.tineUV * p + arg.flatRightUV * (1 - p);
+		//rightUV = arg.tineUV * p + arg.flatRightUV * (1 - p);
+		MyVector2::Interpolate(&arg.tineUV, &arg.flatRightUV, p, 1-p, &rightUV);
 		double rightZ = arg.tine.z * p + arg.flatRight.z * (1 - p);
 		rightX = arg.tine.x * r + arg.flatRight.x * (1 - r);
 

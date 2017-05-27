@@ -18,6 +18,7 @@ public:
 	~Camera() {}
 
 	double l, r, t, b, n, f; //frustum²ÎÊý
+	double leftBd, rightBd, topBd, bottomBd;
 
 	Transform transform;
 
@@ -60,6 +61,11 @@ private:
 		perspect.data[3][1] = 0;
 		perspect.data[3][2] = 1;
 		perspect.data[3][3] = 0;
+
+		leftBd = l / n;
+		rightBd = r / n;
+		bottomBd = b / n;
+		topBd = t / n;
 	}
 };
 

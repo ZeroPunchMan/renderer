@@ -38,6 +38,12 @@ struct MyVector2
 		return MyVector2(this->x - other.x,
 			this->y - other.y);
 	}
+
+	static void Interpolate(MyVector2 *v0, MyVector2 *v1, double p, double q, MyVector2 *out) {
+		//p*v0 + (1-p)*v1;
+		out->x = v0->x * p + v1->x * q;
+		out->y = v0->y* p + v1->y * q;
+	}
 };
 
 struct MyVector2Int {
@@ -61,6 +67,18 @@ struct MyVector3
 		this->x = x;
 		this->y = y;
 		this->z = z;
+	}
+
+	static MyVector3 Cross(MyVector3 a, MyVector3 b) {
+		MyVector3 res;
+		res.x = a.y * b.z - a.z * b.y;
+		res.y = a.z * b.x - a.x * b.z;
+		res.z = a.x * b.y - a.y * b.x;
+		return res;
+	}
+
+	static double Dot(MyVector3 a, MyVector3 b) {
+		return a.x * b.x + a.y * b.y + a.z * b.z;
 	}
 
 	MyVector3 operator*(double a) {
@@ -87,6 +105,12 @@ struct MyVector3
 		return MyVector3(this->x + other.x,
 			this->y + other.y,
 			this->z + other.z);
+	}
+
+	MyVector3 operator-(MyVector3 other) {
+		return MyVector3(this->x - other.x,
+			this->y - other.y,
+			this->z - other.z);
 	}
 
 	MyVector3 operator+=(MyVector3 other) {
@@ -187,6 +211,14 @@ struct MyColor {
 		this->b *= rightColor.b;
 		this->a *= rightColor.a;
 		return *this;
+	}
+
+	static void Interpolate(MyColor *c0, MyColor *c1, double p, double q, MyColor *out) {
+		//p*c0 + q*c1
+		out->r = c0->r * p + c1->r * q;
+		out->g = c0->g * p + c1->g * q;
+		out->b = c0->b * p + c1->b * q;
+		out->a = c0->a * p + c1->a * q;
 	}
 
 private:

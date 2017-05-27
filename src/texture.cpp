@@ -63,3 +63,27 @@ MyColor Texture::GetPixel(double u, double v) {
 	return color;
 }
 
+
+void Texture::GetPixel(double u, double v, MyColor *out) {
+	if (u < 0)
+		u = 0;
+	else if (u > 1)
+		u = 1;
+
+	if (v < 0)
+		v = 0;
+	else if (v > 1)
+		v = 1;
+
+	int col = u * (width - 1);
+	int row = v * (height - 1);
+	int rowSize = width * pixelSize;
+	int offset = row * rowSize + col * pixelSize;
+	out->r = origin[offset] / 256.0f;
+	out->g = origin[offset + 1] / 256.0f;
+	out->b = origin[offset + 2] / 256.0f;
+	if (pixelSize == COLOR_RGBA)
+		out->a = origin[offset + 3] / 256.0f;
+	else
+		out->a = 1.0f;
+}

@@ -45,21 +45,21 @@ public:
 
 private:
 	ID2D1Bitmap *pBitMap = NULL;
-	const static int canvasSize = 3000;
+	const static int canvasSize = 600;
 	UINT32 bitMap[canvasSize][canvasSize];
 	double zBuffer[canvasSize][canvasSize];
 
-	inline void SetPixel(int x, int y, MyColor* c) {
+	inline void SetPixel(int x, int y, MyColor* c, double z) {
 		if (x < 0 || x >= canvasSize || y < 0 || y >= canvasSize)
 			return;
+		if (z <= zBuffer[y][x])
+			return;
+		zBuffer[y][x] = z;
 		uint8_t r = c->r * 255;
 		uint8_t g = c->g * 255;
 		uint8_t b = c->b * 255;
 		bitMap[y][x] = (UINT32)r << 16 | (UINT32)g << 8 | b; // x y reverse
 	}
-	//void SetPixel(int x, int y, UINT32 color); { bitMap[y][x] = color; }
-	
-	//void DrawPixel(int x, int y, double z, MyColor* c);
 
 	void DrawLine(int y, int left, int right, MyVector2* leftUV, MyVector2* rightUV, double leftZ, double rigthZ);
 };

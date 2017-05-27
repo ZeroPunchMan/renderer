@@ -22,7 +22,7 @@ ID2D1HwndRenderTarget *pRT = NULL;
 Canvas *pCanvas = nullptr;
 Scene scene;
 
-#define WinSize	3000
+#define WinSize	600
 
 LARGE_INTEGER lastTime, interval;
 LARGE_INTEGER Frequency;
@@ -228,27 +228,5 @@ void MyRenderTask() {
 }
 
 void Test() {
-	MyVector3 A(10, 25, -13);
-	MyVector3 B(82, -37, -57);
-	double p = 0.3f, n = -1;
-	double r = (p*A.z) / (p*A.z + (1 - p)*B.z);
-	MyVector3 C = A * p + B * (1 - p);
-	//p0
-	A.x = A.x * n / A.z;
-	A.y = A.y * n / A.z;
-	A.z = n;
-	//p1
-	B.x = B.x * n / B.z;
-	B.y = B.y * n / B.z;
-	B.z = n;
 
-	//p
-	C.x = C.x * n / C.z;
-	C.y = C.y * n / C.z;
-	C.z = n;
-	
-	MyVector3 D = A * r + B * (1 - r);
-	MyLog("p: %.2f, r: %.2f", p, r);
-	MyLog("C: %s", C.ToString().c_str());
-	MyLog("D: %s", D.ToString().c_str());
 }

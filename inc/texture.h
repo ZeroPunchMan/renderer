@@ -13,9 +13,10 @@ public:
 	~Texture();
 
 	MyColor GetPixel(double u, double v);
+	void GetPixel(double u, double v, MyColor *out);
 	void GenMipMap();
 private:
-	
+
 	UCHAR *origin = nullptr;
 	int width, height, pixelSize;
 };

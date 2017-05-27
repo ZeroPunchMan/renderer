@@ -22,7 +22,7 @@ ID2D1HwndRenderTarget *pRT = NULL;
 Canvas *pCanvas = nullptr;
 Scene scene;
 
-#define WinSize	600
+#define WinSize	1000
 
 LARGE_INTEGER lastTime, interval;
 LARGE_INTEGER Frequency;
@@ -140,41 +140,41 @@ void MyInput() { //要用大写字母
 	MyVector3 motion;
 	//前后
 	if (GetKeyState('W') & SHIFTED) {
-		motion.z = deltaTime * 100;
+		pz += -deltaTime * 100;
 	}
 	else if (GetKeyState('S') & SHIFTED) {
-		motion.z = -deltaTime * 100;
+		pz += deltaTime * 100;
 	}
 	//左右
 	if (GetKeyState('A') & SHIFTED) {
-		motion.x = deltaTime * 50;
+		px += -deltaTime * 50;
 	}
 	else if (GetKeyState('D') & SHIFTED) {
-		motion.x = -deltaTime * 50;
+		px += deltaTime * 50;
 	}
 
 	//上下
 	if (GetKeyState('I') & SHIFTED) {
-		motion.y = deltaTime * 50;
+		py += deltaTime * 50;
 	}
 	else if (GetKeyState('K') & SHIFTED) {
-		motion.y = -deltaTime * 50;
+		py += -deltaTime * 50;
 	}
 
 	//上下
 	if (GetKeyState(VK_UP) & SHIFTED) {
-		rotationX += deltaTime * 50;
+		rx += deltaTime * 50;
 	}
 	else if (GetKeyState(VK_DOWN) & SHIFTED) {
-		rotationX += -deltaTime * 50;
+		rx += -deltaTime * 50;
 	}
 
 	//左右
 	if (GetKeyState(VK_RIGHT) & SHIFTED) {
-		rotationY += -deltaTime * 50;
+		ry += -deltaTime * 50;
 	}
 	else if (GetKeyState(VK_LEFT) & SHIFTED) {
-		rotationY += deltaTime * 50;
+		ry += deltaTime * 50;
 	}
 
 	/*static bool inRotation = false;
@@ -209,9 +209,9 @@ void MyInput() { //要用大写字母
 		MyLog(_T("%.2f, %.2f"), rotationX, rotationY);
 	}*/
 
-	if(motion.x != 0 || motion.y != 0 || motion.z != 0)
+	/*if(motion.x != 0 || motion.y != 0 || motion.z != 0)
 		scene.camera.Move(motion);
-	scene.camera.transform.rotation.EulerAngles(rotationX, rotationY, 0);
+	scene.camera.transform.rotation.EulerAngles(rotationX, rotationY, 0);*/
 }
 
 

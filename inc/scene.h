@@ -6,6 +6,9 @@
 #include "texture.h"
 #include <list>
 
+extern float rx, ry, rz;
+extern float px, py, pz;
+
 using namespace std;
 class Scene
 {
@@ -26,7 +29,10 @@ public:
 	void HomoClip(vector<Vertex> *in, vector<Vertex> *out);
 	void Triangulate(vector<Vertex> *in, vector<int> *out);
 
+	//渲染模型
+	void RenderModel(Canvas* pCanvas, Model *pModel);
 
+	//齐次裁剪函数
 	typedef bool (*VertexInternalFunc)(Vertex *pV, Camera *pCamera);
 	typedef void (*IntersectionFunc)(Vertex *v1, Vertex *v2, Vertex *out, Camera *pCamera);
 	void Clip(vector<Vertex> *in, vector<Vertex> *out, VertexInternalFunc isInternal, IntersectionFunc getIntersection);

@@ -294,6 +294,13 @@ struct HomoPoint3
 			this->w + other.w);
 	}
 
+	HomoPoint3 operator+(MyVector3 other) {
+		return HomoPoint3(this->pos.x + other.x,
+			this->pos.y + other.y,
+			this->pos.z + other.z,
+			this->w);
+	}
+
 	HomoPoint3 operator-(MyVector3 other) {
 		return HomoPoint3(this->pos.x - other.x,
 			this->pos.y - other.y,
@@ -302,7 +309,9 @@ struct HomoPoint3
 	}
 
 	HomoPoint3 operator+=(MyVector3 vec) {
-		this->pos += vec;
+		this->pos.x += vec.x;
+		this->pos.y += vec.y;
+		this->pos.z += vec.z;
 		return *this;
 	}
 

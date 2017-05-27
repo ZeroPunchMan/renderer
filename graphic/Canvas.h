@@ -45,7 +45,7 @@ public:
 
 private:
 	ID2D1Bitmap *pBitMap = NULL;
-	const static int canvasSize = 600;
+	const static int canvasSize = 1000;
 	UINT32 bitMap[canvasSize][canvasSize];
 	double zBuffer[canvasSize][canvasSize];
 

@@ -3,13 +3,6 @@
 #include "math.h"
 
 
-bool doubleEqual(double a, double b) {
-	if (abs(a - b) < 0.0001f)
-		return true;
-
-	return false;
-}
-
 //É¨ÃèÏß
 void Canvas::DrawScanLine(int y, int left, int right, MyVector2* leftUV, MyVector2* rightUV, double leftZ, double rightZ) {
 	if (left >= right)

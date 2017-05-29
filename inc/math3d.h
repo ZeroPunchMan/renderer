@@ -1,5 +1,12 @@
 #pragma once
 
+inline bool doubleEqual(double a, double b) {
+	if (abs(a - b) < 0.0001f)
+		return true;
+
+	return false;
+}
+
 #define PI (3.1415926f)
 
 struct MyVector2

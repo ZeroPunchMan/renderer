@@ -3,7 +3,7 @@
 
 Texture* texture = NULL;
 Canvas::Canvas() {
-	texture = new Texture("resources/awesomeface.png");
+	texture = new Texture("../../resources/awesomeface.png");
 }
 
 HRESULT Canvas::Init(ID2D1HwndRenderTarget *pRT) {

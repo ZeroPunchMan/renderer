@@ -7,6 +7,9 @@ void Canvas::LineBres(Vertex *v0, Vertex *v1, MyColor *color) {
 	int xEnd = (v1->homoCoord.pos.x + 1) * (canvasSize - 1) / 2;
 	int yEnd = (1 - v1->homoCoord.pos.y) * (canvasSize - 1) / 2;
 
+	//MyLog("start %.3f, end %.3f", v0->homoCoord.w, v1->homoCoord.w);
+
+
 	int dx = xEnd - xSrc;
 	int dy = yEnd - ySrc;
 
@@ -21,11 +24,11 @@ void Canvas::LineBres(Vertex *v0, Vertex *v1, MyColor *color) {
 	}
 
 
-	int a = 2 * vdy - vdx;
+	int p = 2 * vdy - vdx;
 	SetPixelWithouZBuffer(xSrc, ySrc, color);
 	int y = 0;
 	for (int x = 1; x <= vdx; x++){
-		if (a >= 0){
+		if (p >= 0){
 			y++;
 		}
 		else {
@@ -42,11 +45,8 @@ void Canvas::LineBres(Vertex *v0, Vertex *v1, MyColor *color) {
 		if (minusY)
 			addY = -addY;
 
-		double r = (double)addY / (v1->homoCoord.pos.y - v0->homoCoord.pos.y);
-		double p = r * v1->homoCoord.w / (r*v1->homoCoord.w + (1 - r)*v0->homoCoord.w);
-		double z = v1->homoCoord.w * (1 - p) + v0->homoCoord.w * p;
 		SetPixelWithouZBuffer(xSrc + addX, ySrc + addY, color);
-		a = a + 2 * (vdy + vdx * (a >= 0 ? -1 : 0));
+		p = p + 2 * (vdy + vdx * (p >= 0 ? -1 : 0));
 	}
 }
 //

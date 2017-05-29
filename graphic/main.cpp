@@ -41,6 +41,9 @@ int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow) {
 
 	RegisterClass(&wc);
 
+	/*RECT clientRect = {0,0,600,600};
+	AdjustWindowRect(&clientRect, WS_OVERLAPPEDWINDOW, false);*/
+
 	HWND hwnd = CreateWindowEx(
 		0,
 		CLASS_NAME,
@@ -48,7 +51,9 @@ int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow) {
 		WS_OVERLAPPEDWINDOW,
 
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-
+		/*0,0,
+		clientRect.right - clientRect.left,
+		clientRect.bottom - clientRect.top,*/
 		NULL,
 		NULL,
 		hins,

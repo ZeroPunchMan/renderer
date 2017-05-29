@@ -3,7 +3,7 @@
 
 Texture* texture = NULL;
 Canvas::Canvas() {
-	texture = new Texture("../resources/awesomeface.png");
+	texture = new Texture("resources/awesomeface.png");
 }
 
 HRESULT Canvas::Init(ID2D1HwndRenderTarget *pRT) {
@@ -27,13 +27,6 @@ ID2D1Bitmap* Canvas::GetBitMap(){
 
 	return this->pBitMap;
 }
-
-//void Canvas::DrawPixel(int x, int y, double z, MyColor* c) {
-//	if (z > zBuffer[x][y]) {
-//		this->SetPixel(x, y, c);
-//		zBuffer[x][y] = z;
-//	}
-//}
 
 void Canvas::Clear() {
 	for (int i = 0; i < canvasSize; i++) {

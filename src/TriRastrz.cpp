@@ -11,18 +11,17 @@ bool doubleEqual(double a, double b) {
 }
 
 //扫描线
-void Canvas::DrawLine(int y, int left, int right, MyVector2* leftUV, MyVector2* rightUV, double leftZ, double rightZ) {
+void Canvas::DrawScanLine(int y, int left, int right, MyVector2* leftUV, MyVector2* rightUV, double leftZ, double rightZ) {
 	if (left >= right)
 		return;
 	MyVector2 uv;
-	MyColor textureColor;
-	//double z = leftZ;
+	MyColor textureColor(1,0,0);
 	for (int x = left; x <= right; x++) {
 		double r = ((double)right - x) / (right - left);
 		double p = r * rightZ / (r * rightZ + (1 - r) * leftZ);
 		double z = leftZ * p + rightZ * (1 - p);
-		MyVector2::Interpolate(leftUV, rightUV, p, 1-p, &uv);
-		texture->GetPixel(uv.x, uv.y, &textureColor);
+		/*MyVector2::Interpolate(leftUV, rightUV, p, 1-p, &uv);
+		texture->GetPixel(uv.x, uv.y, &textureColor);*/
 		SetPixel(x, y, &textureColor, z);
 	}
 }
@@ -71,7 +70,7 @@ void Canvas::DrawFlatTopTriangle(FlatTriangleArg arg) {
 		int xRightInt = floor(rightX) - 1;
 
 		//画扫描线
-		DrawLine(y, xLeftInt, xRightInt, &leftUV, &rightUV, leftZ, rightZ);
+		DrawScanLine(y, xLeftInt, xRightInt, &leftUV, &rightUV, leftZ, rightZ);
 		
 	}
 }
@@ -119,9 +118,10 @@ void Canvas::DrawFlatBottomTriangle(FlatTriangleArg arg) {
 		int xRightInt = floor(rightX) - 1;
 
 		//画扫描线
-		DrawLine(y, xLeftInt, xRightInt, &leftUV, &rightUV, leftZ, rightZ);
+		DrawScanLine(y, xLeftInt, xRightInt, &leftUV, &rightUV, leftZ, rightZ);
 	}
 }
+
 
 void Canvas::DrawTriangle(Vertex *v0, Vertex *v1, Vertex *v2) {
 	//在ndc上,按y从大到小排列顶点,转换到屏幕坐标时,y则是从小到大
@@ -153,7 +153,7 @@ void Canvas::DrawTriangle(Vertex *v0, Vertex *v1, Vertex *v2) {
 	//两个端点,公用平底/顶
 	Vertex split;
 	split.homoCoord = v2->homoCoord * (1 - r) + v0->homoCoord * r;
-	split.homoCoord.w = v2->homoCoord.w * (1 - p) + v0->homoCoord.w * p;
+	split.homoCoord.w = v2->homoCoord.w * (1 - p) + v0->homoCoord.w * p; //深度信息,存在w
 	split.uv = v2->uv * (1 - p) + v0->uv * p;
 	bool splitLeft = split.homoCoord.pos.x < v1->homoCoord.pos.x;
 	FlatTriangleArg arg;
@@ -167,10 +167,6 @@ void Canvas::DrawTriangle(Vertex *v0, Vertex *v1, Vertex *v2) {
 	//计算uv
 	arg.flatLeftUV = splitLeft ? split.uv : v1->uv;
 	arg.flatRightUV = splitLeft ? v1->uv : split.uv;
-
-	//坐标换算成像素
-	//arg.flatLeft *= this->canvasSize - 1;
-	//arg.flatRight *= this->canvasSize - 1;
 
 	if (v0Y != v1Y) { //v0和v1的y不同,可以画一个平底三角形
 		//计算坐标并换算成像素

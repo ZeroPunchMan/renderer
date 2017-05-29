@@ -6,16 +6,17 @@
 #include "matrix.h"
 #include "Canvas.h"
 #include "vertex.h"
-
+#include "FbxModel.h"
 
 class Camera
 {
 public:
+	const double cameraSize = 0.17320508075688772935274463415059;
 	Camera() {
-		l = -1.0f;
-		r = 1.0f;
-		t = 1.0f;
-		b = -1.0f;
+		l = -cameraSize;
+		r = cameraSize;
+		t = cameraSize;
+		b = -cameraSize;
 		n = -0.3f;
 		f = -1000.0f;
 		SetupFrumstum();
@@ -44,7 +45,7 @@ public:
 	}
 
 	//äÖÈ¾Ä£ÐÍ
-	void RenderModel(Canvas* pCanvas, Model *pModel);
+	void RenderModel(Canvas* pCanvas, FbxModel *pModel);
 	void DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2);
 
 	MyMat4 perspect;

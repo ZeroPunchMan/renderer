@@ -1,22 +1,42 @@
 #include "stdafx.h"
 #include "camera.h"
 
+void ReadVertex(FbxMesh* pMesh, int ctrlPointIndex, Vertex* pVertex)
+{
+	FbxVector4* pCtrlPoint = pMesh->GetControlPoints();
 
-void Camera::RenderModel(Canvas* pCanvas, Model *pModel) {//模型由三角形组成
-	for (int i = 0; i < pModel->triCount * 3; i += 3) {
+	pVertex->homoCoord.pos.x = pCtrlPoint[ctrlPointIndex].mData[0];
+	pVertex->homoCoord.pos.y = pCtrlPoint[ctrlPointIndex].mData[1];
+	pVertex->homoCoord.pos.z = pCtrlPoint[ctrlPointIndex].mData[2];
+	pVertex->homoCoord.w = 1;
+}
+
+void Camera::RenderModel(Canvas* pCanvas, FbxModel *pModel) {//模型由三角形组成
+	FbxNode* pRootNode = pModel->pFbxScene->GetRootNode();
+	
+	FbxMesh* pMesh = pRootNode->GetChild(0)->GetMesh();	
+	int polygonCount = pMesh->GetPolygonCount();
+	
+	for (int i = 0; i < polygonCount; i++) {
 		Vertex vertices[3];
-		vertices[0] = pModel->vertices[pModel->triangles[i]];
-		vertices[1] = pModel->vertices[pModel->triangles[i + 1]];
-		vertices[2] = pModel->vertices[pModel->triangles[i + 2]];
 		for (int k = 0; k < 3; k++) {
-			//顶点旋转
-			vertices[k].homoCoord = pModel->transform.rotation.GetInverse() * vertices[k].homoCoord;
-			//加上偏移到世界坐标
+			int offset = pMesh->GetPolygonVertex(i, k);
+			ReadVertex(pMesh, offset, &vertices[k]);
+			vertices[k].homoCoord = pModel->transform.rotation * vertices[k].homoCoord;
 			vertices[k].homoCoord += pModel->transform.position;
 		}
-		//画三角形
 		DrawTriangle(pCanvas, vertices[0], vertices[1], vertices[2]);
 	}
+
+	/*Vertex v[3];
+	v[0].homoCoord.pos = MyVector3(0, 0, -50);
+	v[1].homoCoord.pos = MyVector3(0, -50, -50);
+	v[2].homoCoord.pos = MyVector3(50, 0, -50);
+	for (int i = 0; i < 3; i++) {
+	v[i].homoCoord = pModel->transform.rotation * v[i].homoCoord;
+	v[i].homoCoord += pModel->transform.position;
+	}
+	DrawTriangle(pCanvas, v[0], v[1], v[2]);*/
 }
 
 HomoPoint3 Camera::WorldToCamera(HomoPoint3 point) {
@@ -28,8 +48,8 @@ HomoPoint3 Camera::WorldToCamera(HomoPoint3 point) {
 
 void Camera::DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2) {
 	//背面剔除
-	if (BackFaceCull(&v0, &v1, &v2))
-		return;
+	/*if (BackFaceCull(&v0, &v1, &v2))
+		return;*/
 
 	//变换到摄像机坐标系
 	v0.homoCoord = this->WorldToCamera(v0.homoCoord);
@@ -50,15 +70,17 @@ void Camera::DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2) {
 	unclip.push_back(v0);
 	unclip.push_back(v1);
 	unclip.push_back(v2);
+
 	vector<Vertex> clipped;
 	this->HomoClip(&unclip, &clipped);
 	if (clipped.size() == 0) {
 		return;
 	}
 
-	//透视除法
+	
 	vector<Vertex>::iterator it;
 	for (it = clipped.begin(); it != clipped.end(); it++) {
+		//透视除法
 		it->homoCoord.pos /= it->homoCoord.w;
 	}
 
@@ -66,7 +88,8 @@ void Camera::DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2) {
 	vector<int> triangles;
 	this->Triangulate(&clipped, &triangles);
 
-	//视口坐标渲染
+	
+	//视口坐标渲染三角形
 	int count = triangles.size() / 3;
 	for (int i = 0; i < count; i++) {
 		int a, b, c;
@@ -74,6 +97,21 @@ void Camera::DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2) {
 		b = triangles[i * 3 + 1];
 		c = triangles[i * 3 + 2];
 		pCanvas->DrawTriangle(&clipped[a], &clipped[b], &clipped[c]);
+
+		/*pCanvas->LineBres(&clipped[a], &clipped[b], &lineColor);
+		pCanvas->LineBres(&clipped[b], &clipped[c], &lineColor);
+		pCanvas->LineBres(&clipped[c], &clipped[a], &lineColor);*/
+	}
+
+	//画mesh
+	MyColor lineColor(0, 1, 1);
+	for (vector<Vertex>::iterator it = clipped.begin(); it != clipped.end(); it++) {
+		if (it != clipped.begin()) {
+			pCanvas->LineBres(&(*it), &(*(it - 1)), &lineColor);
+		}
+		else {
+			pCanvas->LineBres(&(*it), &(*(clipped.end() - 1)), &lineColor);
+		}
 	}
 }
 
@@ -170,7 +208,8 @@ void Camera::Clip(vector<Vertex> *in, vector<Vertex> *out, VertexInternalFunc is
 		bool curInternal = isInternal(&(*it), this);
 		if (curInternal) { //当前点在内部
 			if (lastInternal) { //上一个点也在内部,直接push就行了
-				out->push_back(*it);
+				if(it != in->end()-1)
+					out->push_back(*it);
 			}
 			else { //上一个点在外部,获取交点,并push交点和当前点
 				Vertex intsct;

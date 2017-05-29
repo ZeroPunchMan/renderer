@@ -30,10 +30,11 @@ public:
 
 	ID2D1Bitmap* GetBitMap();
 
-	//void LineBres(double xs, double ys, double xe, double ye);
-	//void LineDDA(double xs, double ys, double xe, double ye);
-	
+	//x,y坐标为投影面比例坐标,w为实际深度,xy坐标为opengl屏幕坐标,屏幕中心为(0,0),右上角为(1,1)
 	void DrawTriangle(Vertex *v0, Vertex *v1, Vertex *v2);
+
+	//x,y坐标为投影面比例坐标,w为实际深度,xy坐标为opengl屏幕坐标,屏幕中心为(0,0),右上角为(1,1)
+	void LineBres(Vertex *v0, Vertex *v1, MyColor *color);
 
 	//平底
 	void DrawFlatBottomTriangle(FlatTriangleArg arg);
@@ -61,7 +62,17 @@ private:
 		bitMap[y][x] = (UINT32)r << 16 | (UINT32)g << 8 | b; // x y reverse
 	}
 
-	void DrawLine(int y, int left, int right, MyVector2* leftUV, MyVector2* rightUV, double leftZ, double rigthZ);
+	inline void SetPixelWithouZBuffer(int x, int y, MyColor* c) {
+		if (x < 0 || x >= canvasSize || y < 0 || y >= canvasSize)
+			return;
+
+		uint8_t r = c->r * 255;
+		uint8_t g = c->g * 255;
+		uint8_t b = c->b * 255;
+		bitMap[y][x] = (UINT32)r << 16 | (UINT32)g << 8 | b; // x y reverse
+	}
+
+	void DrawScanLine(int y, int left, int right, MyVector2* leftUV, MyVector2* rightUV, double leftZ, double rigthZ);
 };
 
 

@@ -9,20 +9,25 @@
 #include "rotation.h"
 #include "scene.h"
 #include <time.h>  
+#include "Dwrite.h"
 
 using namespace std;
 
 HRESULT D2D1Init(HWND hwnd);
 LRESULT CALLBACK WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void MyRenderTask();
-void Test();
+void Fps();
 void MyInput();
 
 ID2D1HwndRenderTarget *pRT = NULL;
+IDWriteTextFormat *pTextFormat = NULL;
+ID2D1SolidColorBrush *pBrush = NULL;
 Canvas *pCanvas = nullptr;
 Scene scene;
 
 #define WinSize	1000
+RECT fpsRect;
+static double deltaTime;
 
 LARGE_INTEGER lastTime, interval;
 LARGE_INTEGER Frequency;
@@ -63,7 +68,6 @@ int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow) {
 	MyRenderTask();
 
 	MSG msg = {};
-	Test();
 
 	QueryPerformanceFrequency(&Frequency);
 	QueryPerformanceCounter(&lastTime);
@@ -85,6 +89,7 @@ int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow) {
 			interval.QuadPart /= Frequency.QuadPart;
 
 			if (interval.QuadPart > 33) {
+				deltaTime = interval.QuadPart / 1000.0f;
 				HWND ahwnd = GetForegroundWindow();
 				if (ahwnd == hwnd) {
 					MyInput();
@@ -118,6 +123,42 @@ HRESULT D2D1Init(HWND hwnd) {
 		&pRT
 	);
 
+	//d2d1 text
+	IDWriteFactory *pDWriteFactory = NULL;
+	if (SUCCEEDED(hr))
+	{
+		hr = DWriteCreateFactory(
+			DWRITE_FACTORY_TYPE_SHARED,
+			__uuidof(IDWriteFactory),
+			reinterpret_cast<IUnknown**>(&pDWriteFactory)
+		);
+	}
+	if (SUCCEEDED(hr))
+	{
+		hr = pDWriteFactory->CreateTextFormat(
+			L"Khmer UI Bold",
+			NULL,
+			DWRITE_FONT_WEIGHT_REGULAR,
+			DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL,
+			35.0f,
+			L"en-us",
+			&pTextFormat
+		);
+	}
+	/*if (SUCCEEDED(hr))
+	{
+		pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+		pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+	}*/
+
+	pRT->CreateSolidColorBrush(
+		D2D1::ColorF(D2D1::ColorF::Green),
+		&pBrush
+	);
+
+	GetClientRect(hwnd, &fpsRect);
+
 	return hr;
 }
 
@@ -135,8 +176,9 @@ LRESULT CALLBACK WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
 
 #define SHIFTED 0x8000 
 static double rotationY = 0, rotationX = 0;
+
 void MyInput() { //要用大写字母
-	double deltaTime = interval.QuadPart / 1000.0f;
+	
 	MyVector3 motion;
 	//前后
 	if (GetKeyState('W') & SHIFTED) {
@@ -223,10 +265,36 @@ void MyRenderTask() {
 	D2D1_SIZE_U size = bitMap->GetPixelSize();
 	D2D1_RECT_F rectS = D2D1::RectF(0, 0, size.width - 1, size.height - 1);
 	pRT->BeginDraw();
+	pRT->Clear();
 	pRT->DrawBitmap(bitMap, &rectD, 1.0f, D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, &rectS);
+	Fps();
 	pRT->EndDraw();
 }
 
-void Test() {
+void Fps() {
+	
+	static int fps = 0;
+	static double sencond = 0;
+	static int frames = 0;
 
+	++frames;
+	sencond += deltaTime;
+	if (sencond >= 1)
+	{
+		fps = frames;
+		frames = 0;
+		sencond = 0;
+	}
+
+	static wchar_t strFps[128];
+	wsprintfW(strFps, L"FPS %d", fps);
+	D2D1_SIZE_F renderTargetSize = pRT->GetSize();
+	
+	pRT->DrawTextA(
+		strFps,
+		lstrlenW(strFps),
+		pTextFormat,
+		D2D1::RectF(0, 0, renderTargetSize.width, renderTargetSize.height),
+		pBrush
+	);
 }

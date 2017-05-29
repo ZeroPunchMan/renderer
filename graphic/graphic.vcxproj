@@ -96,29 +96,32 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>d2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d2d1.lib;libfbxsdk.lib;Dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib;$(FBXSDK)\lib\vs2015\x64\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir);$(SolutionDir)\inc;$(FBXSDK)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(SolutionDir)\inc;$(FBXSDK)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <PreprocessorDefinitions>FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>D:\vs_prj\armadillo\examples\lib_win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d2d1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(FBXSDK)\lib\vs2015\x64\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d2d1.lib;libfbxsdk.lib;Dwrite.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\camera.cpp" />
     <ClCompile Include="..\src\Canvas.cpp" />
+    <ClCompile Include="..\src\FbxModel.cpp" />
     <ClCompile Include="..\src\LineRastrz.cpp" />
     <ClCompile Include="..\src\MyLog.cpp" />
     <ClCompile Include="..\src\scene.cpp" />
@@ -132,6 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\camera.h" />
+    <ClInclude Include="..\inc\FbxModel.h" />
     <ClInclude Include="..\inc\math3d.h" />
     <ClInclude Include="..\inc\matrix.h" />
     <ClInclude Include="..\inc\MyLog.h" />

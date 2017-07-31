@@ -49,13 +49,13 @@ void Canvas::DrawFlatTopTriangle(FlatTriangleArg arg) {
 			r = 1;
 		double p = r * arg.tine.z / (r * arg.tine.z + (1 - r) * arg.flatLeft.z);
 		//leftUV = arg.flatLeftUV * p + arg.tineUV * (1 - p);
-		MyVector2::Interpolate(&arg.flatLeftUV, &arg.tineUV, p, 1-p, &leftUV);
+		MyVector2::Interpolate(arg.flatLeftUV, arg.tineUV, p, 1-p, &leftUV);
 		double leftZ = arg.flatLeft.z * p + arg.tine.z * (1 - p);
 		leftX = r * arg.flatLeft.x + (1-r) * arg.tine.x;
 		
 		p = r * arg.tine.z / (r * arg.tine.z + (1 - r) * arg.flatRight.z);
 		//rightUV = arg.flatRightUV * p + arg.tineUV * (1 - p);
-		MyVector2::Interpolate(&arg.flatRightUV, &arg.tineUV, p, 1 - p, &rightUV);
+		MyVector2::Interpolate(arg.flatRightUV, arg.tineUV, p, 1 - p, &rightUV);
 		double rightZ = arg.flatRight.z * p + arg.tine.z * (1 - p);
 		rightX = r* arg.flatRight.x + (1-r)*arg.tine.x;
 		
@@ -97,13 +97,13 @@ void Canvas::DrawFlatBottomTriangle(FlatTriangleArg arg) {
 			r = 1;
 		double p = r * arg.flatLeft.z / (r * arg.flatLeft.z + (1 - r) * arg.tine.z);
 		//leftUV = arg.tineUV * p + arg.flatLeftUV * (1 - p);
-		MyVector2::Interpolate(&arg.tineUV, &arg.flatLeftUV, p, 1-p, &leftUV);
+		MyVector2::Interpolate(arg.tineUV, arg.flatLeftUV, p, 1-p, &leftUV);
 		double leftZ = arg.tine.z * p + arg.flatLeft.z * (1 - p);
 		leftX = arg.tine.x * r + arg.flatLeft.x * (1 - r);
 
 		p = r * arg.flatRight.z / (r * arg.flatRight.z + (1 - r) * arg.tine.z);
 		//rightUV = arg.tineUV * p + arg.flatRightUV * (1 - p);
-		MyVector2::Interpolate(&arg.tineUV, &arg.flatRightUV, p, 1-p, &rightUV);
+		MyVector2::Interpolate(arg.tineUV, arg.flatRightUV, p, 1-p, &rightUV);
 		double rightZ = arg.tine.z * p + arg.flatRight.z * (1 - p);
 		rightX = arg.tine.x * r + arg.flatRight.x * (1 - r);
 
@@ -179,3 +179,29 @@ void Canvas::DrawTriangle(Vertex *v0, Vertex *v1, Vertex *v2) {
 		DrawFlatTopTriangle(arg);
 	}
 }
+
+//直接画,不拆分成两个三角形
+//void Canvas::DrawTriangleDirect(Vertex *v0, Vertex *v1, Vertex *v2){
+//	//在ndc上,按y从大到小排列顶点,转换到屏幕坐标时,y则是从小到大
+//	if (v0->homoCoord.pos.y > v2->homoCoord.pos.y) {
+//
+//	}
+//	else {
+//		Swap(v0, v2);
+//	}
+//
+//	if (v1->homoCoord.pos.y > v0->homoCoord.pos.y) {
+//		Swap(v0, v1);
+//	}
+//	else if (v1->homoCoord.pos.y < v2->homoCoord.pos.y) {
+//		Swap(v1, v2);
+//	}
+//
+//	int v0Y, v1Y, v2Y;
+//	v0Y = (1 - v0->homoCoord.pos.y) * (this->canvasSize - 1) / 2;
+//	v1Y = (1 - v1->homoCoord.pos.y) * (this->canvasSize - 1) / 2;
+//	v2Y = (1 - v2->homoCoord.pos.y) * (this->canvasSize - 1) / 2;
+//	if (v2Y == v0Y) { //三个点的y相同,不想画了
+//		return;
+//	}
+//}

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "math.h"
+#include "mylog.h"
+
 inline bool doubleEqual(double a, double b) {
 	if (abs(a - b) < 0.0001f)
 		return true;
@@ -30,26 +33,26 @@ struct MyVector2
 			this->y / a);
 	}
 
-	MyVector2 operator+(MyVector2 other) {
+	MyVector2 operator+(const MyVector2& other) {
 		return MyVector2(this->x + other.x,
 			this->y + other.y);
 	}
 
-	MyVector2 operator+=(MyVector2 other) {
+	MyVector2 operator+=(const MyVector2& other) {
 		this->x += other.x;
 		this->y += other.y;
 		return *this;
 	}
 
-	MyVector2 operator-(MyVector2 other) {
+	MyVector2 operator-(const MyVector2& other) {
 		return MyVector2(this->x - other.x,
 			this->y - other.y);
 	}
 
-	static void Interpolate(MyVector2 *v0, MyVector2 *v1, double p, double q, MyVector2 *out) {
+	static void Interpolate(const MyVector2& v0, const MyVector2& v1, double p, double q, MyVector2 *out) {
 		//p*v0 + (1-p)*v1;
-		out->x = v0->x * p + v1->x * q;
-		out->y = v0->y* p + v1->y * q;
+		out->x = v0.x * p + v1.x * q;
+		out->y = v0.y* p + v1.y * q;
 	}
 };
 
@@ -76,7 +79,7 @@ struct MyVector3
 		this->z = z;
 	}
 
-	static MyVector3 Cross(MyVector3 a, MyVector3 b) {
+	static MyVector3 Cross(const MyVector3& a, const MyVector3& b) {
 		MyVector3 res;
 		res.x = a.y * b.z - a.z * b.y;
 		res.y = a.z * b.x - a.x * b.z;
@@ -84,7 +87,7 @@ struct MyVector3
 		return res;
 	}
 
-	static double Dot(MyVector3 a, MyVector3 b) {
+	static double Dot(const MyVector3& a, const MyVector3& b) {
 		return a.x * b.x + a.y * b.y + a.z * b.z;
 	}
 
@@ -108,26 +111,26 @@ struct MyVector3
 		return *this;
 	}
 
-	MyVector3 operator+(MyVector3 other) {
+	MyVector3 operator+(const MyVector3& other) {
 		return MyVector3(this->x + other.x,
 			this->y + other.y,
 			this->z + other.z);
 	}
 
-	MyVector3 operator-(MyVector3 other) {
+	MyVector3 operator-(const MyVector3& other) {
 		return MyVector3(this->x - other.x,
 			this->y - other.y,
 			this->z - other.z);
 	}
 
-	MyVector3 operator+=(MyVector3 other) {
+	MyVector3 operator+=(const MyVector3& other) {
 		this->x += other.x;
 		this->y += other.y;
 		this->z += other.z;
 		return *this;
 	}
 
-	MyVector3 operator-=(MyVector3 other) {
+	MyVector3 operator-=(const MyVector3& other) {
 		this->x -= other.x;
 		this->y -= other.y;
 		this->z -= other.z;
@@ -190,21 +193,21 @@ struct MyColor {
 			this->a / x);
 	}
 
-	MyColor operator+(MyColor rightColor) {
+	MyColor operator+(const MyColor& rightColor) {
 		return MyColor(this->r + rightColor.r,
 			this->g + rightColor.g,
 			this->b + rightColor.b,
 			this->a + rightColor.a);
 	}
 
-	MyColor operator-(MyColor rightColor) {
+	MyColor operator-(const MyColor& rightColor) {
 		return MyColor(this->r - rightColor.r,
 			this->g - rightColor.g,
 			this->b - rightColor.b,
 			this->a - rightColor.a);
 	}
 
-	MyColor operator+=(MyColor rightColor) {
+	MyColor operator+=(const MyColor& rightColor) {
 		this->r += rightColor.r;
 		this->g += rightColor.g;
 		this->b += rightColor.b;
@@ -212,7 +215,7 @@ struct MyColor {
 		return *this;
 	}
 
-	MyColor operator*=(MyColor rightColor) {
+	MyColor operator*=(const MyColor& rightColor) {
 		this->r *= rightColor.r;
 		this->g *= rightColor.g;
 		this->b *= rightColor.b;
@@ -220,12 +223,12 @@ struct MyColor {
 		return *this;
 	}
 
-	static void Interpolate(MyColor *c0, MyColor *c1, double p, double q, MyColor *out) {
+	static void Interpolate(const MyColor& c0, const MyColor& c1, double p, double q, MyColor *out) {
 		//p*c0 + q*c1
-		out->r = c0->r * p + c1->r * q;
-		out->g = c0->g * p + c1->g * q;
-		out->b = c0->b * p + c1->b * q;
-		out->a = c0->a * p + c1->a * q;
+		out->r = c0.r * p + c1.r * q;
+		out->g = c0.g * p + c1.g * q;
+		out->b = c0.b * p + c1.b * q;
+		out->a = c0.a * p + c1.a * q;
 	}
 
 private:
@@ -271,7 +274,7 @@ struct HomoPoint3
 		this->w = 1;
 	}
 
-	HomoPoint3(MyVector3 v) {
+	HomoPoint3(const MyVector3& v) {
 		pos = v;
 		w = 1;
 	}
@@ -294,35 +297,35 @@ struct HomoPoint3
 			this->w * a);
 	}
 
-	HomoPoint3 operator+(HomoPoint3 other) {
+	HomoPoint3 operator+(const HomoPoint3& other) {
 		return HomoPoint3(this->pos.x + other.pos.x,
 			this->pos.y + other.pos.y,
 			this->pos.z + other.pos.z,
 			this->w + other.w);
 	}
 
-	HomoPoint3 operator+(MyVector3 other) {
+	HomoPoint3 operator+(const MyVector3& other) {
 		return HomoPoint3(this->pos.x + other.x,
 			this->pos.y + other.y,
 			this->pos.z + other.z,
 			this->w);
 	}
 
-	HomoPoint3 operator-(MyVector3 other) {
+	HomoPoint3 operator-(const MyVector3& other) {
 		return HomoPoint3(this->pos.x - other.x,
 			this->pos.y - other.y,
 			this->pos.z - other.z,
 			this->w);
 	}
 
-	HomoPoint3 operator+=(MyVector3 vec) {
+	HomoPoint3 operator+=(const MyVector3& vec) {
 		this->pos.x += vec.x;
 		this->pos.y += vec.y;
 		this->pos.z += vec.z;
 		return *this;
 	}
 
-	HomoPoint3 operator-=(MyVector3 vec) {
+	HomoPoint3 operator-=(const MyVector3& vec) {
 		this->pos -= vec;
 		return *this;
 	}
@@ -338,39 +341,3 @@ struct HomoPoint3
 		return string(buff);
 	}
 };
-
-//struct MyVector4
-//{
-//	double x, y, z, w;
-//
-//	MyVector4(){}
-//
-//	MyVector4(double x, double y, double z, double w) {
-//		this->x = x;
-//		this->y = y;
-//		this->z = z;
-//		this->w = w;
-//	}
-//
-//	MyVector4 operator*(double a) {
-//		return MyVector4(this->x * a,
-//			this->y * a,
-//			this->z * a,
-//			this->w * a);
-//	}
-//
-//	MyVector4 operator+(MyVector4 rightV4) {
-//		return MyVector4(this->x + rightV4.x,
-//			this->y + rightV4.y,
-//			this->z + rightV4.z,
-//			this->w + rightV4.w);
-//	}
-//
-//	wstring ToString() {
-//		TCHAR buff[512];
-//		swprintf(buff, _T("{%.2f, %.2f, %.2f, %.2f}\r\n"),
-//			x, y, z, w);
-//		return wstring(buff);
-//	}
-//
-//};

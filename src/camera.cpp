@@ -27,23 +27,6 @@ void Camera::RenderModel(Canvas* pCanvas, FbxModel *pModel) {//模型由三角形组成
 		}
 		DrawTriangle(pCanvas, vertices[0], vertices[1], vertices[2]);
 	}
-
-	/*Vertex v[6];
-	v[0].homoCoord.pos = MyVector3(0, 0, 0);
-	v[1].homoCoord.pos = MyVector3(0, -50, -0);
-	v[2].homoCoord.pos = MyVector3(50, 0, -0);
-	v[3].homoCoord.pos = v[0].homoCoord.pos + MyVector3(25, 25, -50);
-	v[4].homoCoord.pos = v[1].homoCoord.pos + MyVector3(25, 25, -50);
-	v[5].homoCoord.pos = v[2].homoCoord.pos + MyVector3(25, 25, -50);
-
-
-	for (int i = 0; i < 6; i++) {
-		v[i].homoCoord = pModel->transform.rotation * v[i].homoCoord;
-		v[i].homoCoord += pModel->transform.position;
-	}
-	
-	DrawTriangle(pCanvas, v[3], v[4], v[5]);
-	DrawTriangle(pCanvas, v[0], v[1], v[2]);*/
 }
 
 HomoPoint3 Camera::WorldToCamera(HomoPoint3 point) {

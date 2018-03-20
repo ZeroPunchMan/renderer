@@ -9,7 +9,7 @@ void RenderTexture::LineBres(Vertex *v0, Vertex *v1, const Color& color) {
 	int ySrc = (1 - v0->homoCoord.pos.y) * (RTSize - 1) / 2;
 	int xEnd = (v1->homoCoord.pos.x + 1) * (RTSize - 1) / 2;
 	int yEnd = (1 - v1->homoCoord.pos.y) * (RTSize - 1) / 2;
-
+	
 	int dx = xEnd - xSrc;
 	int dy = yEnd - ySrc;
 
@@ -27,8 +27,8 @@ void RenderTexture::LineBres(Vertex *v0, Vertex *v1, const Color& color) {
 	int p = 2 * vdy - vdx;
 	SetPixel(xSrc, ySrc, color, v0->homoCoord.w);
 	int y = 0;
-	for (int x = 1; x <= vdx; x++) {
-		if (p >= 0) {
+	for (int x = 1; x <= vdx; x++){
+		if (p >= 0){
 			y++;
 		}
 		else {
@@ -36,7 +36,7 @@ void RenderTexture::LineBres(Vertex *v0, Vertex *v1, const Color& color) {
 		}
 
 		int addX = x, addY = y;
-		if (exg) {
+		if (exg){
 			addX = y;
 			addY = x;
 		}
@@ -47,8 +47,8 @@ void RenderTexture::LineBres(Vertex *v0, Vertex *v1, const Color& color) {
 
 		double r = (vdx - x) /
 			(vdx - 0);
-		double p = r * v1->homoCoord.w / (r * v1->homoCoord.w + (1 - r) * v0->homoCoord.w);
-		float z = v1->homoCoord.w * (1 - p) + v0->homoCoord.w * p;
+		r = r * v1->homoCoord.w / (r * v1->homoCoord.w + (1 - r) * v0->homoCoord.w);
+		float z = v1->homoCoord.w * (1 - r) + v0->homoCoord.w * r + MIRCO_FLOAT;
 
 		SetPixel(xSrc + addX, ySrc + addY, color, z);
 

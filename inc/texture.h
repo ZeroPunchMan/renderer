@@ -12,8 +12,8 @@ public:
 	Texture(const char* path);
 	~Texture();
 
-	MyColor GetPixel(double u, double v);
-	void GetPixel(double u, double v, MyColor *out);
+	MyMath::Color GetPixel(double u, double v);
+	void GetPixel(double u, double v, MyMath::Color *out);
 	void GenMipMap();
 private:
 

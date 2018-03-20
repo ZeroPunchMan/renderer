@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "camera.h"
 
+using namespace MyMath;
+
 void ReadVertex(FbxMesh* pMesh, int ctrlPointIndex, Vertex* pVertex)
 {
 	FbxVector4* pCtrlPoint = pMesh->GetControlPoints();
@@ -11,9 +13,8 @@ void ReadVertex(FbxMesh* pMesh, int ctrlPointIndex, Vertex* pVertex)
 	pVertex->homoCoord.w = 1;
 }
 
-void Camera::RenderModel(Canvas* pCanvas, FbxModel *pModel) {//模型由三角形组成
+void Camera::RenderModel(RenderTexture* pRenderTexture, FbxModel *pModel) {//模型由三角形组成
 	FbxNode* pRootNode = pModel->pFbxScene->GetRootNode();
-	//int count = pRootNode->GetChild(0)->GetChildCount();
 	FbxMesh* pMesh = pRootNode->GetChild(0)->GetMesh();	
 	int polygonCount = pMesh->GetPolygonCount();
 	
@@ -25,38 +26,21 @@ void Camera::RenderModel(Canvas* pCanvas, FbxModel *pModel) {//模型由三角形组成
 			vertices[k].homoCoord = pModel->transform.rotation * vertices[k].homoCoord;
 			vertices[k].homoCoord += pModel->transform.position;
 		}
-		DrawTriangle(pCanvas, vertices[0], vertices[1], vertices[2]);
+		DrawTriangle(pRenderTexture, vertices[0], vertices[1], vertices[2]);
 	}
-
-	/*Vertex v[6];
-	v[0].homoCoord.pos = MyVector3(0, 0, 0);
-	v[1].homoCoord.pos = MyVector3(0, -50, -0);
-	v[2].homoCoord.pos = MyVector3(50, 0, -0);
-	v[3].homoCoord.pos = v[0].homoCoord.pos + MyVector3(25, 25, -50);
-	v[4].homoCoord.pos = v[1].homoCoord.pos + MyVector3(25, 25, -50);
-	v[5].homoCoord.pos = v[2].homoCoord.pos + MyVector3(25, 25, -50);
-
-
-	for (int i = 0; i < 6; i++) {
-		v[i].homoCoord = pModel->transform.rotation * v[i].homoCoord;
-		v[i].homoCoord += pModel->transform.position;
-	}
-	
-	DrawTriangle(pCanvas, v[3], v[4], v[5]);
-	DrawTriangle(pCanvas, v[0], v[1], v[2]);*/
 }
 
-HomoPoint3 Camera::WorldToCamera(HomoPoint3 point) {
-	HomoPoint3 newPoint;
+HomoVector4 Camera::WorldToCamera(HomoVector4 point) {
+	HomoVector4 newPoint;
 	newPoint = point - this->transform.position;
 	newPoint = this->transform.rotation.GetInverse() * newPoint;
 	return newPoint;
 }
 
-void Camera::DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2) {
+void Camera::DrawTriangle(RenderTexture* pRenderTexture, Vertex v0, Vertex v1, Vertex v2) {
 	//背面剔除
-	/*if (BackFaceCull(&v0, &v1, &v2))
-		return;*/
+	if (BackFaceCull(&v0, &v1, &v2))
+		return;
 
 	//变换到摄像机坐标系
 	v0.homoCoord = this->WorldToCamera(v0.homoCoord);
@@ -103,33 +87,32 @@ void Camera::DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2) {
 		a = triangles[i * 3];
 		b = triangles[i * 3 + 1];
 		c = triangles[i * 3 + 2];
-		pCanvas->DrawTriangle(&clipped[a], &clipped[b], &clipped[c]);
-
-		//MyLog("v0 %.3f, v1 %.3f, v2 %.3f", clipped[a].homoCoord.w, clipped[b].homoCoord.w, clipped[c].homoCoord.w);
+		pRenderTexture->DrawTriangle(&clipped[a], &clipped[b], &clipped[c]);
 	}
 
 	//画mesh
-	MyColor lineColor(0, 1, 1);
+	Color lineColor(0, 1, 1);
 	for (vector<Vertex>::iterator it = clipped.begin(); it != clipped.end(); it++) {
 		if (it != clipped.begin()) {
-			pCanvas->LineBres(&(*it), &(*(it - 1)), &lineColor);
+			pRenderTexture->LineBres(&(*it), &(*(it - 1)), lineColor);
 		}
 		else {
-			pCanvas->LineBres(&(*it), &(*(clipped.end() - 1)), &lineColor);
+			pRenderTexture->LineBres(&(*it), &(*(clipped.end() - 1)), lineColor);
 		}
 	}
 }
 
+//背面剔除
 bool Camera::BackFaceCull(Vertex *v0, Vertex *v1, Vertex *v2) {
-	MyVector3 a = v1->homoCoord.pos - v0->homoCoord.pos;
-	MyVector3 b = v2->homoCoord.pos - v0->homoCoord.pos;
-	MyVector3 n = MyVector3::Cross(a, b);
-	double res = MyVector3::Dot(n, v0->homoCoord.pos - this->transform.position);
+	Vector3 a = v1->homoCoord.pos - v0->homoCoord.pos;
+	Vector3 b = v2->homoCoord.pos - v0->homoCoord.pos;
+	Vector3 n = Vector3::Cross(a, b);
+	double res = Vector3::Dot(n, v0->homoCoord.pos - this->transform.position);
 	return res >= 0;
 }
 
 bool Camera::FrustumCull(Vertex *pV0, Vertex *pV1, Vertex *pV2) {
-	//cull三角形,处理的多边形原理一样
+	//cull三角形,处理多边形原理一样,全在某个面的外侧,则可以剔除掉
 	uint8_t codes[3];
 	Vertex* vertices[3];
 	vertices[0] = pV0;

@@ -4,51 +4,63 @@
 #include "transform.h"
 #include "math3d.h"
 #include "matrix.h"
-#include "Canvas.h"
+#include "RenderTexture.h"
 #include "vertex.h"
 #include "FbxModel.h"
 
 class Camera
 {
 public:
-	const double cameraSize = 0.17320508075688772935274463415059;
 	Camera() {
-		l = -cameraSize;
-		r = cameraSize;
-		t = cameraSize;
-		b = -cameraSize;
-		n = -0.3f;
-		f = -1000.0f;
+		Setup(-1, -1000, 1, 90);
+	}
+
+	Camera(float n, float f, float aspect, float fov) {
+		Setup(n, f, aspect, fov);
+	}
+
+	void Setup(float n, float f, float aspect, float fov)
+	{
+		this->fov = fov;
+
+		this->n = n;
+		this->f = f;
+		this->b = n * tan(fov * PI / 360);
+		this->t = -this->b;
+		this->l = this->b * aspect;
+		this->r = this->t * aspect;
 		SetupFrumstum();
 	}
-	~Camera() {}
 
-	double l, r, t, b, n, f; //frustum参数
-	double leftBd, rightBd, topBd, bottomBd;
+	~Camera() {}
 
 	Transform transform;
 
-	void LookAt(MyVector3 point) {
+	
+	
+	void LookAt(MyMath::Vector3 point) {
 
 	}
 
-	HomoPoint3 PerspectiveProj(HomoPoint3 point) {
-		HomoPoint3 newPoint = this->perspect * point;
+	MyMath::HomoVector4 PerspectiveProj(MyMath::HomoVector4 point) {
+		MyMath::HomoVector4 newPoint = this->perspect * point;
 		return newPoint;
 	}
 
 	//z为向前,y为向上,x为向左
-	void Move(MyVector3 dist) {
-		MyVector3 mov(-dist.x, dist.y, -dist.z);
+	void Move(MyMath::Vector3 dist) {
+		MyMath::Vector3 mov(-dist.x, dist.y, -dist.z);
 		mov = transform.rotation * mov;
 		transform.position += mov;
 	}
 
 	//渲染模型
-	void RenderModel(Canvas* pCanvas, FbxModel *pModel);
-	void DrawTriangle(Canvas* pCanvas, Vertex v0, Vertex v1, Vertex v2);
+	void RenderModel(RenderTexture* pRenderTexture, FbxModel *pModel);
 
-	MyMat4 perspect;
+	//画三角形
+	void DrawTriangle(RenderTexture* pRenderTexture, Vertex v0, Vertex v1, Vertex v2);
+
+	MyMath::MyMat4 perspect;
 private:
 	
 	void SetupFrumstum() {
@@ -77,17 +89,18 @@ private:
 		bottomBd = b / n;
 		topBd = t / n;
 	}
-
 	
-	HomoPoint3 WorldToCamera(HomoPoint3 point);
+	MyMath::HomoVector4 WorldToCamera(MyMath::HomoVector4 point);
 	bool FrustumCull(Vertex *v0, Vertex *v1, Vertex *v2);
 	bool BackFaceCull(Vertex *v0, Vertex *v1, Vertex *v2);
 	void HomoClip(vector<Vertex> *in, vector<Vertex> *out);
 	void Triangulate(vector<Vertex> *in, vector<int> *out);
 	
-	//齐次裁剪函数
-	typedef bool(*VertexInternalFunc)(Vertex *pV, Camera *pCamera);
-	typedef void(*IntersectionFunc)(Vertex *v1, Vertex *v2, Vertex *out, Camera *pCamera);
+	
+	typedef bool(*VertexInternalFunc)(Vertex *pV, Camera *pCamera);  //判断是否在内部
+	typedef void(*IntersectionFunc)(Vertex *v1, Vertex *v2, Vertex *out, Camera *pCamera); //计算交点
+	
+	//齐次裁减,传入不同的函数,裁减不同的平面
 	void Clip(vector<Vertex> *in, vector<Vertex> *out, VertexInternalFunc isInternal, IntersectionFunc getIntersection);
 
 	//近平面裁剪
@@ -114,6 +127,10 @@ private:
 	//下平面裁剪
 	static bool VertexInBottom(Vertex *pV, Camera *pCamera);
 	static void IntersectionOnBottom(Vertex *pV1, Vertex *pV2, Vertex *pOut, Camera *pCamera);
+
+	double l, r, t, b, n, f; //frustum参数
+	double leftBd, rightBd, topBd, bottomBd;
+	float fov;
 };
 
 

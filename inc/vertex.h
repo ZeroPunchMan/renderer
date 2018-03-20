@@ -4,8 +4,8 @@
 #include "transform.h"
 
 struct Vertex {
-	HomoPoint3 homoCoord;
-	MyVector2 uv;
+	MyMath::HomoVector4 homoCoord;
+	MyMath::Vector2 uv;
 	Vertex(){}
 };
 

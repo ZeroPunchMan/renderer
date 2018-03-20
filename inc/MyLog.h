@@ -4,37 +4,28 @@
 #include "iostream"
 #include "windows.h"
 
-
-using namespace std;
-#ifdef _UNICODE
-typedef wstring MyString;
-#else
-typedef std::string MyString;
-#endif
-
-
-class CLogOutput{
+class CppLog{
 public:
-	CLogOutput(){
+	CppLog(){
 		
 	}
-	~CLogOutput(){}
+	~CppLog(){}
 
-	CLogOutput operator << (float x){
+	CppLog operator << (float x){
 		TCHAR temp[200];
 		_stprintf_s(temp, 200, _T("%.2f"), x);
 		OutputDebugString(temp);
 		return *this;
 	}
 
-	CLogOutput operator << (int x){
+	CppLog operator << (int x){
 		TCHAR temp[200];
 		_stprintf_s(temp, 200, _T("%d"), x);
 		OutputDebugString(temp);
 		return *this;
 	}
 
-	CLogOutput operator << (TCHAR* x){
+	CppLog operator << (TCHAR* x){
 		OutputDebugString(x);
 		return *this;
 	}
@@ -44,5 +35,5 @@ public:
 	}
 };
 
-void MyLog(const TCHAR* format, ...);
+void CLog(const TCHAR* format, ...);
 

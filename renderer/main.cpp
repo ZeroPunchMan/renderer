@@ -4,7 +4,7 @@
 #include "d2d1.h"
 #include "math.h"
 #include "TCHAR.h"
-#include "Canvas.h"
+#include "RenderTexture.h"
 #include "matrix.h"
 #include "rotation.h"
 #include "scene.h"
@@ -12,6 +12,7 @@
 #include "Dwrite.h"
 
 using namespace std;
+using namespace MyMath;
 
 HRESULT D2D1Init(HWND hwnd);
 LRESULT CALLBACK WinProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -22,7 +23,7 @@ void MyInput();
 ID2D1HwndRenderTarget *pRT = NULL;
 IDWriteTextFormat *pTextFormat = NULL;
 ID2D1SolidColorBrush *pBrush = NULL;
-Canvas *pCanvas = nullptr;
+RenderTexture *pRenderTexture = nullptr;
 Scene scene;
 
 #define WinSize	1000
@@ -68,12 +69,11 @@ int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow) {
 
 	D2D1Init(hwnd);
 
-	pCanvas = new Canvas();
-	pCanvas->Init(pRT);
+	pRenderTexture = new RenderTexture();
+	pRenderTexture->Init(pRT);
 	MyRenderTask();
 
 	MSG msg = {};
-
 	QueryPerformanceFrequency(&Frequency);
 	QueryPerformanceCounter(&lastTime);
 	for (;;) {
@@ -151,11 +151,6 @@ HRESULT D2D1Init(HWND hwnd) {
 			&pTextFormat
 		);
 	}
-	/*if (SUCCEEDED(hr))
-	{
-		pTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
-		pTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
-	}*/
 
 	pRT->CreateSolidColorBrush(
 		D2D1::ColorF(D2D1::ColorF::Green),
@@ -184,7 +179,7 @@ static double rotationY = 0, rotationX = 0;
 
 void MyInput() { //要用大写字母
 	
-	MyVector3 motion;
+	Vector3 motion;
 	//前后
 	if (GetKeyState('W') & SHIFTED) {
 		pz += -deltaTime * 100;
@@ -263,9 +258,9 @@ void MyInput() { //要用大写字母
 
 
 void MyRenderTask() {
-	pCanvas->Clear();
-	scene.Render(pCanvas);
-	ID2D1Bitmap* bitMap = pCanvas->GetBitMap();
+	pRenderTexture->Clear();
+	scene.Render(pRenderTexture);
+	ID2D1Bitmap* bitMap = pRenderTexture->GetBitMap();
 	D2D1_RECT_F rectD = D2D1::RectF(0, 0, WinSize, WinSize);
 	D2D1_SIZE_U size = bitMap->GetPixelSize();
 	D2D1_RECT_F rectS = D2D1::RectF(0, 0, size.width - 1, size.height - 1);

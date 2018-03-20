@@ -13,11 +13,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Canvas">
-      <UniqueIdentifier>{2f839bc3-fa7e-4295-8f62-85f2054b720e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Primitive">
       <UniqueIdentifier>{2a25bbb0-085d-4a64-98ca-ea1f5d6102a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderTexture">
+      <UniqueIdentifier>{2f839bc3-fa7e-4295-8f62-85f2054b720e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -34,13 +34,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\LineRastrz.cpp">
-      <Filter>Canvas</Filter>
+      <Filter>RenderTexture</Filter>
     </ClCompile>
     <ClCompile Include="..\src\TriRastrz.cpp">
-      <Filter>Canvas</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\Canvas.cpp">
-      <Filter>Canvas</Filter>
+      <Filter>RenderTexture</Filter>
     </ClCompile>
     <ClCompile Include="..\src\texture.cpp">
       <Filter>Source Files</Filter>
@@ -50,6 +47,9 @@
     </ClCompile>
     <ClCompile Include="..\src\FbxModel.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RenderTexture.cpp">
+      <Filter>RenderTexture</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,10 +89,10 @@
     <ClInclude Include="..\inc\texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Canvas.h">
+    <ClInclude Include="..\inc\FbxModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\inc\FbxModel.h">
+    <ClInclude Include="RenderTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

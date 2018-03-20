@@ -10,5 +10,5 @@ public:
 
 //private:
 	Rotation rotation;
-	MyVector3 position;
+	MyMath::Vector3 position;
 };

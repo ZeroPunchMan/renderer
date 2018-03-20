@@ -21,20 +21,20 @@ FbxModel* FbxModel::ImportFbxModel(const char *path) {
 
 	FbxImporter* pImporter = FbxImporter::Create(pFbxManager, "");
 	if (!pImporter->Initialize(path, -1, FbxModel::pFbxManager->GetIOSettings())) {
-		MyLog("Call to FbxImporter::Initialize() failed.\n");
-		MyLog("Error returned: %s\n\n", pImporter->GetStatus().GetErrorString());
+		CLog("Call to FbxImporter::Initialize() failed.\n");
+		CLog("Error returned: %s\n\n", pImporter->GetStatus().GetErrorString());
 		exit(1);
 	}
 
 	FbxModel* model = new FbxModel();
 	model->pFbxScene = FbxScene::Create(pFbxManager, "myScene");
 	if (!model->pFbxScene) {
-		MyLog("create fbx scene failed");
+		CLog("create fbx scene failed");
 		exit(1);
 	}
 
 	if (!pImporter->Import(model->pFbxScene)) {
-		MyLog("import fbx scene failed");
+		CLog("import fbx scene failed");
 		exit(1);
 	}
 	pImporter->Destroy();

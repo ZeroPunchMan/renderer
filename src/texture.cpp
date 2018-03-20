@@ -3,6 +3,8 @@
 #include "texture.h"
 #include "stb_image.h"
 
+using namespace MyMath;
+
 Texture::Texture() {
 
 }
@@ -20,12 +22,12 @@ Texture::Texture(const char* path) {
 			this->pixelSize = COLOR_RGB;
 		}
 		else {
-			MyLog("%s style unknown", path);
+			CLog("%s style unknown", path);
 		}
 	}
 	else
 	{
-		MyLog(_T("Failed"));
+		CLog(_T("Failed"));
 	}
 }
 
@@ -37,8 +39,8 @@ void Texture::GenMipMap() {
 
 }
 
-MyColor Texture::GetPixel(double u, double v) {
-	MyColor color;
+Color Texture::GetPixel(double u, double v) {
+	Color color;
 	if (u < 0)
 		u = 0;
 	else if (u > 1)
@@ -64,7 +66,7 @@ MyColor Texture::GetPixel(double u, double v) {
 }
 
 
-void Texture::GetPixel(double u, double v, MyColor *out) {
+void Texture::GetPixel(double u, double v, Color *out) {
 	if (u < 0)
 		u = 0;
 	else if (u > 1)

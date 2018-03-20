@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "canvas.h"
+#include "RenderTexture.h"
 #include "camera.h"
 #include "texture.h"
 #include <list>
@@ -20,9 +20,7 @@ public:
 	Camera camera;
 
 	
-	void Render(Canvas*);
-
-	
+	void Render(RenderTexture*);
 };
 
 

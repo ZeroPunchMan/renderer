@@ -5,13 +5,13 @@
 class Rotation {
 
 private:
-	MyMat4 mat;
+	MyMath::MyMat4 mat;
 
 
 
 public:
 	Rotation() {}
-	Rotation(MyVector3 axis, double angle) {
+	Rotation(MyMath::Vector3 axis, double angle) {
 		Quaternion(axis, angle);
 	}
 
@@ -20,7 +20,7 @@ public:
 	}
 
 	//ÉèÖÃÐý×ª¾ØÕó
-	void Quaternion(MyVector3 axis, double angle) {
+	void Quaternion(MyMath::Vector3 axis, double angle) {
 		axis.Normalize();
 		double sinHalfAngle = sin(angle * PI / 360);
 		double qw = cos(angle * PI / 360);
@@ -78,12 +78,12 @@ public:
 		this->mat.data[3][3] = 1;
 	}
 
-	void EulerAngles(MyVector3 angles) {
+	void EulerAngles(MyMath::Vector3 angles) {
 		this->EulerAngles(angles.x, angles.y, angles.z);
 	}
 
-	HomoPoint3 Rotate(HomoPoint3 point) {
-		HomoPoint3 newPoint;
+	MyMath::HomoVector4 Rotate(MyMath::HomoVector4 point) {
+		MyMath::HomoVector4 newPoint;
 		newPoint = this->mat * point;
 		return newPoint;
 	}
@@ -99,7 +99,7 @@ public:
 		return *this;
 	}
 
-	HomoPoint3 operator*(HomoPoint3 point) {
+	MyMath::HomoVector4 operator*(MyMath::HomoVector4 point) {
 		return this->Rotate(point);
 	}
 

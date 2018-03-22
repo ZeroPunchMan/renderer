@@ -33,6 +33,7 @@ public:
 
 	//x,y坐标为投影面比例坐标,w为实际深度,xy坐标为opengl屏幕坐标,屏幕中心为(0,0),右上角为(1,1)
 	void DrawTriangle(Vertex *v0, Vertex *v1, Vertex *v2);
+	//void DrawTriangleDirect(Vertex *v0, Vertex *v1, Vertex *v2); //直接画,不拆分成两个三角形
 
 	//x,y坐标为投影面比例坐标,w为实际深度,xy坐标为opengl屏幕坐标,屏幕中心为(0,0),右上角为(1,1)
 	void LineBres(Vertex *v0, Vertex *v1, const MyMath::Color& color);

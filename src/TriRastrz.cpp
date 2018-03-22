@@ -181,3 +181,29 @@ void RenderTexture::DrawTriangle(Vertex *v0, Vertex *v1, Vertex *v2) {
 		DrawFlatTopTriangle(arg);
 	}
 }
+
+//直接画,不拆分成两个三角形
+//void Canvas::DrawTriangleDirect(Vertex *v0, Vertex *v1, Vertex *v2){
+//	//在ndc上,按y从大到小排列顶点,转换到屏幕坐标时,y则是从小到大
+//	if (v0->homoCoord.pos.y > v2->homoCoord.pos.y) {
+//
+//	}
+//	else {
+//		Swap(v0, v2);
+//	}
+//
+//	if (v1->homoCoord.pos.y > v0->homoCoord.pos.y) {
+//		Swap(v0, v1);
+//	}
+//	else if (v1->homoCoord.pos.y < v2->homoCoord.pos.y) {
+//		Swap(v1, v2);
+//	}
+//
+//	int v0Y, v1Y, v2Y;
+//	v0Y = (1 - v0->homoCoord.pos.y) * (this->canvasSize - 1) / 2;
+//	v1Y = (1 - v1->homoCoord.pos.y) * (this->canvasSize - 1) / 2;
+//	v2Y = (1 - v2->homoCoord.pos.y) * (this->canvasSize - 1) / 2;
+//	if (v2Y == v0Y) { //三个点的y相同,不想画了
+//		return;
+//	}
+//}

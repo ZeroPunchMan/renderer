@@ -4,13 +4,12 @@
 
 using namespace MyMath;
 
-float rx = 0, ry = 0, rz = 0;
-float px = 0, py = 0, pz = -50;
-
+const char* modelFile = "teapot.FBX";
 FbxModel *model;
 Scene::Scene() : camera(-1, -1000, 1, 90)
 {
-	model = FbxModel::ImportFbxModel("../../resources/teapot.FBX");
+	model = FbxModel::ImportFbxModel(modelFile);
+	model->transform.position = Vector3(0, 0, -50);
 }
 
 Scene::~Scene()
@@ -19,7 +18,5 @@ Scene::~Scene()
 }
 
 void Scene::Render(RenderTexture* pRenderTexture) {
-	model->transform.position = Vector3(px, py, pz);
-	model->transform.rotation.EulerAngles(rx, ry, rz);
 	this->camera.RenderModel(pRenderTexture, model);
 }

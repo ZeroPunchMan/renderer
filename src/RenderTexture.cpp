@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "RenderTexture.h"
 
+const char* textureFile = "awesomeface.png";
 Texture* texture = NULL;
 RenderTexture::RenderTexture() {
-	texture = new Texture("../../resources/awesomeface.png");
+	texture = new Texture(textureFile);
 }
 
 HRESULT RenderTexture::Init(ID2D1HwndRenderTarget *pRT) {

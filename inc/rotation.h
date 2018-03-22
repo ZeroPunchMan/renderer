@@ -76,6 +76,7 @@ public:
 		this->mat.data[3][1] = 0;
 		this->mat.data[3][2] = 0;
 		this->mat.data[3][3] = 1;
+
 	}
 
 	void EulerAngles(MyMath::Vector3 angles) {

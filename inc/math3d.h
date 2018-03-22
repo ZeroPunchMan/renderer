@@ -2,9 +2,10 @@
 
 namespace MyMath {
 	#define PI (3.1415926f)
+	#define MIRCO_FLOAT (0.0001f)
 
 	inline bool doubleEqual(double a, double b) {
-		if (abs(a - b) < 0.0001f)
+		if (abs(a - b) < MIRCO_FLOAT)
 			return true;
 
 		return false;

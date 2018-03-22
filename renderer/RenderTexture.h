@@ -6,6 +6,7 @@
 #include "vertex.h"
 #include "texture.h"
 
+
 extern Texture* texture;
 //平底/顶三角形参数
 struct FlatTriangleArg {

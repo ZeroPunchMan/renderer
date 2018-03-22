@@ -14,8 +14,8 @@ void RenderTexture::DrawScanLine(int y, int left, int right, Vector2* leftUV, Ve
 		double r = ((double)right - x) / (right - left);
 		double p = r * rightZ / (r * rightZ + (1 - r) * leftZ);
 		double z = leftZ * p + rightZ * (1 - p);
-		/*Vector2::Interpolate(leftUV, rightUV, p, 1-p, &uv);
-		texture->GetPixel(uv.x, uv.y, &textureColor);*/
+		Vector2::Interpolate(leftUV, rightUV, p, 1-p, &uv);
+		texture->GetPixel(uv.x, uv.y, &textureColor);
 		SetPixel(x, y, textureColor, z);
 	}
 }

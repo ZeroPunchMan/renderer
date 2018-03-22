@@ -136,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\inc\camera.h" />
+    <ClInclude Include="..\inc\common.h" />
     <ClInclude Include="..\inc\FbxModel.h" />
     <ClInclude Include="..\inc\math3d.h" />
     <ClInclude Include="..\inc\matrix.h" />

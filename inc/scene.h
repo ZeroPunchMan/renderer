@@ -6,9 +6,6 @@
 #include "texture.h"
 #include <list>
 
-extern float rx, ry, rz;
-extern float px, py, pz;
-
 using namespace std;
 class Scene
 {

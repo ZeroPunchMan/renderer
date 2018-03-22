@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include "texture.h"
+#include "common.h"
 #include "stb_image.h"
 
 using namespace MyMath;
@@ -23,11 +24,13 @@ Texture::Texture(const char* path) {
 		}
 		else {
 			CLog("%s style unknown", path);
+			ErrorBox("failed on load texture");
 		}
 	}
 	else
 	{
 		CLog(_T("Failed"));
+		ErrorBox("failed on load texture");
 	}
 }
 

@@ -22,6 +22,7 @@ public:
 	void Setup(float n, float f, float aspect, float fov)
 	{
 		this->fov = fov;
+		this->aspect = aspect;
 
 		this->n = n;
 		this->f = f;
@@ -36,8 +37,18 @@ public:
 
 	Transform transform;
 
+	void SetFov(float newFov) {
+		if (newFov > 120)
+			newFov = 120;
+		else if (newFov < 50)
+			newFov = 50;
+		Setup(n, f, aspect, newFov);
+	}
 	
-	
+	float GetFov() {
+		return this->fov;
+	}
+
 	void LookAt(MyMath::Vector3 point) {
 
 	}
@@ -130,7 +141,7 @@ private:
 
 	double l, r, t, b, n, f; //frustum²ÎÊý
 	double leftBd, rightBd, topBd, bottomBd;
-	float fov;
+	float fov, aspect;
 };
 
 

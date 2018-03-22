@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "camera.h"
+#include "fbxsdk\core\math\fbxvector2.h"
+#include "common.h"
 
 using namespace MyMath;
 
@@ -11,20 +13,37 @@ void ReadVertex(FbxMesh* pMesh, int ctrlPointIndex, Vertex* pVertex)
 	pVertex->homoCoord.pos.y = pCtrlPoint[ctrlPointIndex].mData[1];
 	pVertex->homoCoord.pos.z = pCtrlPoint[ctrlPointIndex].mData[2];
 	pVertex->homoCoord.w = 1;
+
 }
 
 void Camera::RenderModel(RenderTexture* pRenderTexture, FbxModel *pModel) {//模型由三角形组成
 	FbxNode* pRootNode = pModel->pFbxScene->GetRootNode();
-	FbxMesh* pMesh = pRootNode->GetChild(0)->GetMesh();	
+	FbxMesh* pMesh = pRootNode->GetChild(0)->GetMesh();
 	int polygonCount = pMesh->GetPolygonCount();
+
+	bool mHasUV = pMesh->GetElementUVCount() > 0;
+	FbxStringList lUVNames;
+	pMesh->GetUVSetNames(lUVNames);
+	const char * lUVName = NULL;
+	if (mHasUV && lUVNames.GetCount())
+	{
+		lUVName = lUVNames[0];
+	}
 	
-	for (int i = 0; i < polygonCount; i++) {
+	int lPolyIndexCounter = 0;
+	for (int polyIndex = 0; polyIndex < polygonCount; polyIndex++) {
 		Vertex vertices[3];
-		for (int k = 0; k < 3; k++) {
-			int offset = pMesh->GetPolygonVertex(i, k);
-			ReadVertex(pMesh, offset, &vertices[k]);
-			vertices[k].homoCoord = pModel->transform.rotation * vertices[k].homoCoord;
-			vertices[k].homoCoord += pModel->transform.position;
+		for (int verIndex = 0; verIndex < 3; verIndex++) {
+			int index = pMesh->GetPolygonVertex(polyIndex, verIndex);
+			ReadVertex(pMesh, index, &vertices[verIndex]);
+			vertices[verIndex].homoCoord = pModel->transform.rotation * vertices[verIndex].homoCoord;
+			vertices[verIndex].homoCoord += pModel->transform.position;
+
+			FbxVector2 lCurrentUV;
+			bool lUnmappedUV;
+			pMesh->GetPolygonVertexUV(polyIndex, verIndex, lUVName, lCurrentUV, lUnmappedUV);
+			vertices[verIndex].uv.x = static_cast<float>(lCurrentUV[0]);
+			vertices[verIndex].uv.y = static_cast<float>(lCurrentUV[1]);
 		}
 		DrawTriangle(pRenderTexture, vertices[0], vertices[1], vertices[2]);
 	}
@@ -68,7 +87,7 @@ void Camera::DrawTriangle(RenderTexture* pRenderTexture, Vertex v0, Vertex v1, V
 		return;
 	}
 
-	
+
 	vector<Vertex>::iterator it;
 	for (it = clipped.begin(); it != clipped.end(); it++) {
 		//透视除法
@@ -79,7 +98,7 @@ void Camera::DrawTriangle(RenderTexture* pRenderTexture, Vertex v0, Vertex v1, V
 	vector<int> triangles;
 	this->Triangulate(&clipped, &triangles);
 
-	
+
 	//视口坐标渲染三角形
 	int count = triangles.size() / 3;
 	for (int i = 0; i < count; i++) {
@@ -91,13 +110,15 @@ void Camera::DrawTriangle(RenderTexture* pRenderTexture, Vertex v0, Vertex v1, V
 	}
 
 	//画mesh
-	Color lineColor(0, 1, 1);
-	for (vector<Vertex>::iterator it = clipped.begin(); it != clipped.end(); it++) {
-		if (it != clipped.begin()) {
-			pRenderTexture->LineBres(&(*it), &(*(it - 1)), lineColor);
-		}
-		else {
-			pRenderTexture->LineBres(&(*it), &(*(clipped.end() - 1)), lineColor);
+	if (bShowMesh) {
+		Color lineColor(0, 1, 1);
+		for (vector<Vertex>::iterator it = clipped.begin(); it != clipped.end(); it++) {
+			if (it != clipped.begin()) {
+				pRenderTexture->LineBres(&(*it), &(*(it - 1)), lineColor);
+			}
+			else {
+				pRenderTexture->LineBres(&(*it), &(*(clipped.end() - 1)), lineColor);
+			}
 		}
 	}
 }
@@ -196,7 +217,7 @@ void Camera::Clip(vector<Vertex> *in, vector<Vertex> *out, VertexInternalFunc is
 		bool curInternal = isInternal(&(*it), this);
 		if (curInternal) { //当前点在内部
 			if (lastInternal) { //上一个点也在内部,直接push就行了
-				if(it != in->end()-1)
+				if (it != in->end() - 1)
 					out->push_back(*it);
 			}
 			else { //上一个点在外部,获取交点,并push交点和当前点

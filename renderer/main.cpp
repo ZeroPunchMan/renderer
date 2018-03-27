@@ -29,7 +29,7 @@ ID2D1SolidColorBrush *pBrush = NULL;
 RenderTexture *pRenderTexture = nullptr;
 Scene* pScene;
 
-bool bShowMesh = false;
+bool bShowMesh = true;
 #define RTSize	1000
 RECT fpsRect;
 static double deltaTime;
@@ -234,10 +234,10 @@ void MyInput() { //ÒªÓÃ´óÐ´×ÖÄ¸
 		}
 		else if (bMoving) {
 			pScene->camera.transform.position -= 
-				pScene->camera.transform.rotation * Vector3(1, 0, 0) * ((float)deltaX / screenWidth * 20);
+				pScene->camera.transform.rotation * Vector3(1, 0, 0) * ((float)deltaX / screenWidth * 50);
 
 			pScene->camera.transform.position +=
-				pScene->camera.transform.rotation * Vector3(0, 1, 0) * ((float)deltaY / screenHeight * 20);
+				pScene->camera.transform.rotation * Vector3(0, 1, 0) * ((float)deltaY / screenHeight * 50);
 		}
 
 		lastMousePos = curMousePos;
@@ -324,9 +324,9 @@ void ParseCmd(const char* cmd) {
 			case 't': //texture
 				textureFile = __argv[++i];
 				break;
-			case 'm': //mesh
-				bShowMesh = true;
-				break;
+			//case 'm': //mesh
+			//	bShowMesh = true;
+			//	break;
 			default:
 				ErrorBox("cmd line error");
 				break;

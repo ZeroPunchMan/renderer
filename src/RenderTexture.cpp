@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "RenderTexture.h"
 
-const char* textureFile = "awesomeface.png";
+const char* textureFile = "checker.png";
 Texture* texture = NULL;
 RenderTexture::RenderTexture() {
 	texture = new Texture(textureFile);

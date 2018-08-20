@@ -50,7 +50,7 @@ public:
 	}
 
 	void LookAt(MyMath::Vector3 point) {
-
+		//Ã»ÓÐ×ö
 	}
 
 	MyMath::HomoVector4 PerspectiveProj(MyMath::HomoVector4 point) {

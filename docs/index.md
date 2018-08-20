@@ -15,7 +15,7 @@ __目前仅测试了项目自带的Teapot等FBX文件__
 
 ## 效果演示
 
-
+![](https://raw.githubusercontent.com/knightlyj/renderer/master/docs/img/teapot.png)
 
 ## 动机
 在学习了一些基本的实时渲染知识之后,总感觉有些地方想的不够清楚,在网上看到这类建议,所以做了这个项目.

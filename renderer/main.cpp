@@ -52,7 +52,7 @@ int WinMain(HINSTANCE hins, HINSTANCE, PSTR cmd, int cmdShow) {
 	HWND hwnd = CreateWindowEx(
 		0,
 		CLASS_NAME,
-		__T("learn"),
+		__T("renderer"),
 		WS_OVERLAPPEDWINDOW,
 
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,

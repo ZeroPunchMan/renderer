@@ -24,13 +24,13 @@ Texture::Texture(const char* path) {
 		}
 		else {
 			CLog("%s style unknown", path);
-			ErrorBox("failed on load texture");
+			ErrorBox("failed on loading texture");
 		}
 	}
 	else
 	{
 		CLog(_T("Failed"));
-		ErrorBox("failed on load texture");
+		ErrorBox("failed on loading texture");
 	}
 }
 

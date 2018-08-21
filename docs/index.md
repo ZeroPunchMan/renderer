@@ -27,56 +27,58 @@ __目前仅测试了项目自带的Teapot等FBX文件__
 
 其中核心问题是如何将三角形渲染到bitmap，代码流程如下,看一下注释就能知道流程了.
 ```
-//背面剔除
-if (BackFaceCull(&v0, &v1, &v2))
-	return;
+void Camera::DrawTriangle(RenderTexture* pRenderTexture, Vertex v0, Vertex v1, Vertex v2) {
+    //背面剔除
+    if (BackFaceCull(&v0, &v1, &v2))
+	    return;
 
-//变换到摄像机坐标系
-v0.homoCoord = this->WorldToCamera(v0.homoCoord);
-v1.homoCoord = this->WorldToCamera(v1.homoCoord);
-v2.homoCoord = this->WorldToCamera(v2.homoCoord);
+    //变换到摄像机坐标系
+    v0.homoCoord = this->WorldToCamera(v0.homoCoord);
+    v1.homoCoord = this->WorldToCamera(v1.homoCoord);
+    v2.homoCoord = this->WorldToCamera(v2.homoCoord);
 
-//frustum剔除
-if (FrustumCull(&v0, &v1, &v2))
-	return;
+    //frustum剔除
+    if (FrustumCull(&v0, &v1, &v2))
+	    return;
 
-//透视矩阵变换
-v0.homoCoord = this->PerspectiveProj(v0.homoCoord);
-v1.homoCoord = this->PerspectiveProj(v1.homoCoord);
-v2.homoCoord = this->PerspectiveProj(v2.homoCoord);
+    //透视矩阵变换
+    v0.homoCoord = this->PerspectiveProj(v0.homoCoord);
+    v1.homoCoord = this->PerspectiveProj(v1.homoCoord);
+    v2.homoCoord = this->PerspectiveProj(v2.homoCoord);
 
-//齐次坐标裁剪
-vector<Vertex> unclip;
-unclip.push_back(v0);
-unclip.push_back(v1);
-unclip.push_back(v2);
+    //齐次坐标裁剪
+    vector<Vertex> unclip;
+    unclip.push_back(v0);
+    unclip.push_back(v1);
+    unclip.push_back(v2);
 
-vector<Vertex> clipped;
-this->HomoClip(&unclip, &clipped);
-if (clipped.size() == 0) {
-	return;
-}
-
-
-vector<Vertex>::iterator it;
-for (it = clipped.begin(); it != clipped.end(); it++) {
-	//透视除法
-	it->homoCoord.pos /= it->homoCoord.w;
-}
-
-//三角化
-vector<int> triangles;
-this->Triangulate(&clipped, &triangles);
+    vector<Vertex> clipped;
+    this->HomoClip(&unclip, &clipped);
+    if (clipped.size() == 0) {
+	    return;
+    }
 
 
-//视口坐标渲染三角形
-int count = triangles.size() / 3;
-for (int i = 0; i < count; i++) {
-	int a, b, c;
-	a = triangles[i * 3];
-	b = triangles[i * 3 + 1];
-	c = triangles[i * 3 + 2];
-	pRenderTexture->DrawTriangle(&clipped[a], &clipped[b], &clipped[c]);
+    vector<Vertex>::iterator it;
+    for (it = clipped.begin(); it != clipped.end(); it++) {
+	    //透视除法
+	    it->homoCoord.pos /= it->homoCoord.w;
+    }
+
+    //三角化
+    vector<int> triangles;
+    this->Triangulate(&clipped, &triangles);
+
+
+    //视口坐标渲染三角形
+    int count = triangles.size() / 3;
+    for (int i = 0; i < count; i++) {
+	    int a, b, c;
+	    a = triangles[i * 3];
+	    b = triangles[i * 3 + 1];
+	    c = triangles[i * 3 + 2];
+	    pRenderTexture->DrawTriangle(&clipped[a], &clipped[b], &clipped[c]);
+    }
 }
 ```
 

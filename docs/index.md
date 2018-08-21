@@ -1,6 +1,8 @@
 ﻿# 软件渲染器 
 这是一个软件非常简单的软件渲染器,主要是将Mesh(仅支持三角形)从世界空间变换到屏幕空间(仅实现了透视投影),再进行光栅化完成渲染.
 
+__[源码链接](https://github.com/knightlyj/renderer)__
+
 __[Binary下载链接](https://github.com/knightlyj/renderer/releases/download/1.0.0/renderer.rar)__
 
 ## 使用方法

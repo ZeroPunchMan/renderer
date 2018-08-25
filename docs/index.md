@@ -1,4 +1,6 @@
-﻿# 软件渲染器 
+﻿<script type="text/javascript" async="" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"> </script>
+
+# 软件渲染器 
 这是一个软件非常简单的软件渲染器,主要是将Mesh(仅支持三角形)从世界空间变换到屏幕空间(仅实现了透视投影),再进行光栅化完成渲染.
 
 __[源码链接](https://github.com/knightlyj/renderer)__
@@ -29,60 +31,83 @@ __目前仅测试了项目自带的Teapot等FBX文件__
 ## 实现
 主要逻辑非常简单，用direct2D创建一个ID2D1Bitmap，将一个个三角形渲染到这个bitmap上，再由direct2D渲染这个bitmap.
 
-其中核心问题是如何将三角形渲染到bitmap，代码流程如下,看一下注释就能知道流程了.
+其中核心问题是如何将三角形渲染到bitmap，流程如下.
+
+### 1.背面剔除
+对于大多数应用,如果镜头中看到的是三角形的背面,则被剔除掉,不需要渲染.
+
+比如Unity中shader可以设置剔除方式,正面/背面/不剔除
 ```
-void Camera::DrawTriangle(RenderTexture* pRenderTexture, Vertex v0, Vertex v1, Vertex v2) {
-    //背面剔除
-    if (BackFaceCull(&v0, &v1, &v2))
-	    return;
-
-    //变换到摄像机坐标系
-    v0.homoCoord = this->WorldToCamera(v0.homoCoord);
-    v1.homoCoord = this->WorldToCamera(v1.homoCoord);
-    v2.homoCoord = this->WorldToCamera(v2.homoCoord);
-
-    //frustum剔除
-    if (FrustumCull(&v0, &v1, &v2))
-	    return;
-
-    //透视矩阵变换
-    v0.homoCoord = this->PerspectiveProj(v0.homoCoord);
-    v1.homoCoord = this->PerspectiveProj(v1.homoCoord);
-    v2.homoCoord = this->PerspectiveProj(v2.homoCoord);
-
-    //齐次坐标裁剪
-    vector<Vertex> unclip;
-    unclip.push_back(v0);
-    unclip.push_back(v1);
-    unclip.push_back(v2);
-
-    vector<Vertex> clipped;
-    this->HomoClip(&unclip, &clipped);
-    if (clipped.size() == 0) {
-	    return;
-    }
-
-
-    vector<Vertex>::iterator it;
-    for (it = clipped.begin(); it != clipped.end(); it++) {
-	    //透视除法
-	    it->homoCoord.pos /= it->homoCoord.w;
-    }
-
-    //三角化
-    vector<int> triangles;
-    this->Triangulate(&clipped, &triangles);
-
-
-    //视口坐标渲染三角形
-    int count = triangles.size() / 3;
-    for (int i = 0; i < count; i++) {
-	    int a, b, c;
-	    a = triangles[i * 3];
-	    b = triangles[i * 3 + 1];
-	    c = triangles[i * 3 + 2];
-	    pRenderTexture->DrawTriangle(&clipped[a], &clipped[b], &clipped[c]);
-    }
-}
+Cull Back | Front | Off
 ```
 
+这里简化处理,只剔除背面.
+
+剔除的算法也非常简单:镜头位置为点$$C$$,三角形所在平面上某一点$$P$$,平面法线为$$vec{N}$$,如果$$dot(vec{PC}, vec{N}) >= 0$$,则这个平面上任意图形可以剔除.
+
+### 2.变换到camera的坐标系
+这一步不用细说,网上一大堆文章.
+
+### 3.frustum剔除
+如果这个三角形完全不在镜头可见范围内(即frustum),则被剔除,可以省去后面的一大堆运算.
+
+这一步网上也有很多资料,这里的实现方法:对于frustum的一个面所在平面,如果所有顶点都在平面外侧,则这个多边形可以剔除;对6个面都执行一次即可.
+
+### 4.透视变换和裁剪
+这一步把三个顶点应用透视变换,再裁减三角形.
+其实有一个问题,顺序为什么是"透视变换->裁剪->透视除法"?
+
+我所参考的"Real-Time Rendering, 3rd Edition"中原话如下:
+
+__After the perspective transform is performed, clipping and homogenization (division by w) is done to obtain the normalized device coordinates.__
+
+个人认为先裁剪再透视变换也是可行的,但这里还是按书中所说顺序进行,感觉这个操作顺序有以下两点考量.
+
+  1.透视变换是可逆的线性映射,那么求出透视变换后的裁剪点到顶点的比例,与变换前的比例相同.而透视除法后,这个比例已经不同了,在透视除法之后裁剪会比较麻烦.所以裁剪要先于透视除法.
+  
+  2.在透视变换后,判断是否需要裁剪更简单一点,不过影响非常小.
+
+### 6.透视除法
+经过透视除法,才能将顶点坐标变换到一个规则box中,Direct3D中是边长为1的cube,OpenGL是z长度为2,x和y长度为1的box.
+
+### 7.三角化 
+裁剪后可能不再是一个三角形,注意上面被frustum裁减,本质上是被6个平面裁剪.
+
+这里假设有一个定理:
+```
+凸多边形被平面裁剪后仍然是凸多边形.
+```
+这个定理我没有证明,但直观感觉是对的(如果你发现是错的,麻烦告诉我一下).
+
+有这个定理,那么裁剪得到的一定是凸多边形,凸多边形三角化很简单.
+
+### 8.光栅化
+最后就是把裁剪得到的这些三角形光栅化了,这里用了很常见的算法,把屏幕空间内的三角形切割成一个平底三角形和一个平顶三角形,然后分别光栅化这2个平的三角形.
+这样处理之后,光栅化时非常简单.
+
+光栅化需要考虑边界问题,及一个像素点要不要画.对于Direct3D,光栅化时遵从左上填充规则,这里也是一样处理.
+
+最后还需要加上贴图,要处理uv坐标,其中有一点比较麻烦的地方.
+主要有两个部分,一是三角形内部uv插值方法,二是透视投影的uv插值要根据深度修正.
+
+__1.三角形内部uv插值__
+已知三角形的各个顶点uv,需要知道三角形内部任意一点的uv,可以用重心插值算法,即子三角形占整个三角形面积比例,来计算uv坐标.
+稍微推导一下,可以得出重心插值算法与扫描线算法结果相同.这些内容网上很多资料.
+
+__2.透视投影的uv修正__
+首先看下面这个图,从网上抄来的.
+
+![](https://raw.githubusercontent.com/knightlyj/renderer/master/docs/img/uv-correct.png)
+
+如果在得到三角形各顶点的屏幕坐标后,就直接线形插值,会出现上图中的Affine效果.
+
+究其原因,是因为在屏幕中看到比例,与实际三维空间中比例不同,下图可以看出来,P点的投影位于A和B的投影的中点,而实际P位置并不在A和B的中点.
+
+![](https://raw.githubusercontent.com/knightlyj/renderer/master/docs/img/perspective-uv.png)
+
+实际需要修正,只需要知道P在投影坐标下的比例,已经A和B的深度,就可以得到P在三维空间中的比例.
+
+设投影坐标下$$P = t * A + (1 - t) * B$$,则三维空间中,比例为$$t' = \frac{t * A.z}{t * A.z + (1 - t) * B.z}$$.
+
+## 总结
+整个软件的核心就是渲染三角形,大致模拟了GPU所做的工作,推荐有一定基础的初学者也尝试写这样一个项目.

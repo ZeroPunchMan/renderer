@@ -92,23 +92,25 @@ __After the perspective transform is performed, clipping and homogenization (div
 主要有两个部分,一是三角形内部uv插值方法,二是透视投影的uv插值要根据深度修正.
 
 __1.三角形内部uv插值__
+
 已知三角形的各个顶点uv,需要知道三角形内部任意一点的uv,可以用重心插值算法,即子三角形占整个三角形面积比例,来计算uv坐标.
 稍微推导一下,可以得出重心插值算法与扫描线算法结果相同.这些内容网上很多资料.
 
 __2.透视投影的uv修正__
+
 首先看下面这个图,从网上抄来的.
 
 ![](https://raw.githubusercontent.com/knightlyj/renderer/master/docs/img/uv-correct.png)
 
 如果在得到三角形各顶点的屏幕坐标后,就直接线形插值,会出现上图中的Affine效果.
 
-究其原因,是因为在屏幕中看到比例,与实际三维空间中比例不同,下图可以看出来,P点的投影位于A和B的投影的中点,而实际P位置并不在A和B的中点.
+究其原因,是因为在屏幕中看到比例,与实际三维空间中比例不同,下图可以看出来,$$P'$$位于$$A'$$和$$B'$$的中点,而实际P位置并不在A和B的中点.
 
 ![](https://raw.githubusercontent.com/knightlyj/renderer/master/docs/img/perspective-uv.png)
 
 实际需要修正,只需要知道P在投影坐标下的比例,已经A和B的深度,就可以得到P在三维空间中的比例.
 
-设投影坐标下$$P = t * A + (1 - t) * B$$,则三维空间中,比例为$$t' = \frac{t * A.z}{t * A.z + (1 - t) * B.z}$$.
+设$$P' = t' * A' + (1 - t') * B'$$,则三维空间中,比例为$$t = \frac{t' * Z_{A}}{t' * Z_{A} + (1 - t') * Z_{B}}$$,这里$$Z_{A}$$表示A的z坐标.
 
 ## 总结
 整个软件的核心就是渲染三角形,大致模拟了GPU所做的工作,推荐有一定基础的初学者也尝试写这样一个项目.
